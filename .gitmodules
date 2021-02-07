@@ -1,0 +1,3 @@
+[submodule "liubility-parent"]
+	path = liubility-parent
+	url = http://gitlab.tyu.wiki/liubility/liubility-parent.git

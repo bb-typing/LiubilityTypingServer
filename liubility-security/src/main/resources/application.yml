@@ -1,0 +1,9 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: https://nacos.tyu.wiki
