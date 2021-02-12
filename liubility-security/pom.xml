@@ -10,18 +10,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>liubility-security</artifactId>
+    <version>${parent.version}</version>
 
     <dependencies>
         <dependency>
             <groupId>org.liubility</groupId>
             <artifactId>liubility-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.liubility</groupId>
             <artifactId>liubility-commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${parent.version}</version>
         </dependency>
 
 
@@ -80,6 +81,22 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
+        </dependency>
+
+        <!--jdbc-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+        <!--mybatis不支持java8的时间类型，但是mybatis-plus自动生成的类型是java8的，所以需要引入这个-->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-typehandlers-jsr310</artifactId>
         </dependency>
     </dependencies>
 
