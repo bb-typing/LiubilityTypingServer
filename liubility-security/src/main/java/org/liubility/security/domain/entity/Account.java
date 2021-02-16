@@ -1,9 +1,10 @@
-package org.liuibility.security.domain.entity;
+package org.liubility.security.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -13,10 +14,11 @@ import lombok.NoArgsConstructor;
  * @Des:
  */
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("/base_account")
+@TableName("base_account")
 public class Account extends Model<Account> {
 
     private String username;

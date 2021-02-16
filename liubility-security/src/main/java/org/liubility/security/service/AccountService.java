@@ -1,8 +1,9 @@
-package org.liuibility.security.service;
+package org.liubility.security.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.liubility.commons.dto.account.AccountDto;
-import org.liuibility.security.domain.entity.Account;
+import org.liubility.commons.exception.LBException;
+import org.liubility.security.domain.entity.Account;
 
 /**
  * @Author JDragon
@@ -12,4 +13,6 @@ import org.liuibility.security.domain.entity.Account;
  */
 public interface AccountService extends IService<Account> {
     public AccountDto getLoginAccountByName(String username);
+
+    public String login(AccountDto accountDto) throws LBException;
 }

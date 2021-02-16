@@ -1,7 +1,7 @@
-package org.liuibility.security.mapstruct;
+package org.liubility.security.mapstruct;
 
 import org.liubility.commons.dto.account.AccountDto;
-import org.liuibility.security.domain.entity.Account;
+import org.liubility.security.domain.entity.Account;
 import org.mapstruct.Mapper;
 
 /**
