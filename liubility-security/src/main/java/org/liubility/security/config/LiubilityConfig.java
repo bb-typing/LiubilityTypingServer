@@ -1,7 +1,5 @@
 package org.liubility.security.config;
 
-import org.liubility.commons.JwtServiceImpl;
-import org.liubility.commons.handler.GlobalExceptionHandler;
 import org.liubility.commons.holder.SpringContextHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

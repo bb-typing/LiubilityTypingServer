@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.commons.dto.account.AccountDto;
 import org.liubility.commons.exception.LBException;
-import org.liubility.commons.JwtServiceImpl;
+import org.liubility.commons.jwt.JwtServiceImpl;
 import org.liubility.security.mappers.AccountMapper;
 import org.liubility.security.domain.entity.Account;
 import org.liubility.security.mapstruct.AccountMapStruct;
