@@ -1,4 +1,4 @@
-package org.liubility.security.domain.entity;
+package org.liubility.account.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;

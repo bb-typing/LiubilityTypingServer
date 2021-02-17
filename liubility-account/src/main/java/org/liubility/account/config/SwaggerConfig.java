@@ -1,4 +1,4 @@
-package org.liubility.security.config;
+package org.liubility.account.config;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.springframework.context.annotation.Bean;

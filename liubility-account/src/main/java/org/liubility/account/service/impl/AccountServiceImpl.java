@@ -1,15 +1,14 @@
-package org.liubility.security.service.impl;
+package org.liubility.account.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.commons.dto.account.AccountDto;
-import org.liubility.commons.exception.LBException;
-import org.liubility.commons.holder.SpringContextHolder;
+import org.liubility.commons.exception.AuthException;
 import org.liubility.commons.jwt.JwtServiceImpl;
-import org.liubility.security.mappers.AccountMapper;
-import org.liubility.security.domain.entity.Account;
-import org.liubility.security.mapstruct.AccountMapStruct;
-import org.liubility.security.service.AccountService;
+import org.liubility.account.mappers.AccountMapper;
+import org.liubility.account.domain.entity.Account;
+import org.liubility.account.mapstruct.AccountMapStruct;
+import org.liubility.account.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper,Account> imple
     private AccountMapStruct accountMapStruct;
 
     @Override
-    public AccountDto getLoginAccountByName(String username) {
+    public AccountDto getAccountByName(String username) {
         LambdaQueryWrapper<Account> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Account::getUsername,username);
         Account account = this.getOne(lambdaQueryWrapper);
@@ -37,15 +36,14 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper,Account> imple
     }
 
     @Override
-    public String login(AccountDto accountDto) throws LBException {
-        AccountDto loginAccountByName = getLoginAccountByName(accountDto.getUsername());
+    public String login(AccountDto accountDto) throws AuthException {
+        AccountDto loginAccountByName = getAccountByName(accountDto.getUsername());
         if(loginAccountByName == null){
-            throw new LBException("用户不存在");
+            throw new AuthException("用户不存在");
         }
         if(!loginAccountByName.getPassword().equals(accountDto.getPassword())){
-            throw new LBException("密码错误");
+            throw new AuthException("密码错误");
         }
-
         return jwtService.generateToken(accountDto);
     }
 }

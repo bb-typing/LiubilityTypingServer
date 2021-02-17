@@ -1,4 +1,4 @@
-package org.liubility.security;
+package org.liubility.account;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,8 +17,8 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "org.liubility.api")
 @ComponentScan(basePackages = "org.liubility")
-public class SecurityApplication {
+public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(SecurityApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

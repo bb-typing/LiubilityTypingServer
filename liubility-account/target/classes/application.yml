@@ -2,7 +2,7 @@ server:
   port: 9999
 spring:
   application:
-    name: security-service
+    name: account-service
   cloud:
     nacos:
       discovery:
@@ -16,9 +16,9 @@ spring:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-  type-enums-package: org.liubility.security.constant
+  type-enums-package: org.liubility.account.constant
   mapper-locations: classpath:/mapper/**/*Mapper.xml
-  type-aliases-package: org.liubility.security.domain.entity.*
+  type-aliases-package: org.liubility.account.domain.entity.*
   global-config:
     db-config: #实体类字段上加上@TableLogic注解
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
@@ -26,6 +26,4 @@ mybatis-plus:
 
 jwt:
   expirationTime: 86400000
-  #  expirationTime: 60000
   secretKey: haofangErpJwtSecretKey
-  header: Authorization

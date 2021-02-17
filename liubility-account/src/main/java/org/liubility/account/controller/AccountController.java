@@ -1,11 +1,11 @@
-package org.liubility.security.controller;
+package org.liubility.account.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liubility.commons.dto.account.AccountDto;
-import org.liubility.commons.exception.LBException;
+import org.liubility.commons.exception.AuthException;
 import org.liubility.commons.http.response.normal.Result;
-import org.liubility.security.service.AccountService;
+import org.liubility.account.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +24,9 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @GetMapping("/getLoginAccountByName")
-    @ApiOperation("根据用户名获取登录用户")
-    public AccountDto getLoginAccountByName(@RequestParam String username){
-        return accountService.getLoginAccountByName(username);
-    }
     @PostMapping("/login")
     @ApiOperation("登录")
-    public Result<String> login(@RequestBody AccountDto accountDto) throws LBException {
+    public Result<String> login(@RequestBody AccountDto accountDto) throws AuthException {
         return Result.success(accountService.login(accountDto));
     }
 }

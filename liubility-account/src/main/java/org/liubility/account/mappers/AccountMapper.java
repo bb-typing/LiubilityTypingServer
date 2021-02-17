@@ -1,8 +1,8 @@
-package org.liubility.security.mappers;
+package org.liubility.account.mappers;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.liubility.security.domain.entity.Account;
+import org.liubility.account.domain.entity.Account;
 import org.springframework.stereotype.Repository;
 
 /**
