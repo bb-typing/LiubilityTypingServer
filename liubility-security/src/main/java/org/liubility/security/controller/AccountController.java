@@ -29,7 +29,6 @@ public class AccountController {
     public AccountDto getLoginAccountByName(@RequestParam String username){
         return accountService.getLoginAccountByName(username);
     }
-
     @PostMapping("/login")
     @ApiOperation("登录")
     public Result<String> login(@RequestBody AccountDto accountDto) throws LBException {
