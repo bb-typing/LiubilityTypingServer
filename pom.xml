@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.liubility</groupId>
-    <artifactId>liubility-account-parent</artifactId>
+    <artifactId>liubility-typing-server-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
         <module>liubility-parent</module>
-        <module>liubility-account</module>
+        <module>liubility-typing-server</module>
     </modules>
 </project>

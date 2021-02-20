@@ -1,0 +1,29 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: typing-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: https://nacos.tyu.wiki
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://remotehost:3307/liubility?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 951753
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  type-enums-package: org.liubility.typing.server.constant
+  mapper-locations: classpath:/mapper/**/*Mapper.xml
+  type-aliases-package: org.liubility.typing.server.domain.entity.*
+  global-config:
+    db-config: #实体类字段上加上@TableLogic注解
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+
+jwt:
+  expirationTime: 86400000
+  secretKey: haofangErpJwtSecretKey
