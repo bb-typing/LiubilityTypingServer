@@ -13,5 +13,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapStruct {
-    AccountDto accountToDto(Account account);
+    AccountDto ToDto(Account account);
+
+    Account dtoToAccount(AccountDto account);
 }
