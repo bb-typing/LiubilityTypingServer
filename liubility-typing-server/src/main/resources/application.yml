@@ -17,7 +17,7 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
   type-enums-package: org.liubility.typing.server.constant
-  mapper-locations: classpath:/mapper/**/*Mapper.xml
+  mapper-locations: classpath:/mappers/*Mapper.xml
   type-aliases-package: org.liubility.typing.server.domain.entity.*
   global-config:
     db-config: #实体类字段上加上@TableLogic注解
@@ -27,3 +27,5 @@ mybatis-plus:
 jwt:
   expirationTime: 86400000
   secretKey: haofangErpJwtSecretKey
+
+secret: NwobS3vT3wShr53wI2fvmVbOtV6I5dq9b2n6Zat2DZR

@@ -2,7 +2,6 @@ package org.liubility.typing.server.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.liubility.typing.server.domain.entity.Article;
-import org.liubility.commons.exception.LBException;
 
 /**
  * @Author JDragon
@@ -13,5 +12,5 @@ import org.liubility.commons.exception.LBException;
 public interface ArticleService extends IService<Article> {
     Article getArticle(Article article);
 
-    Article getArticleById(Integer articleId) throws LBException;
+    Article getArticleById(Integer articleId);
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.liubility.typing.server.mappers.TypingHistoryMapper">
+    <select id="getTypingMatchHistory" resultType="org.liubility.typing.server.domain.entity.TypingHistory">
+        select * from typing_history where user_id=#{userId} and mobile=#{mobile} and match_type=1 and type_date=#{typeDate}
+    </select>
+</mapper>

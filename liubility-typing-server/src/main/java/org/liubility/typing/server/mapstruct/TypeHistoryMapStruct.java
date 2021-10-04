@@ -2,7 +2,7 @@ package org.liubility.typing.server.mapstruct;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.liubility.typing.server.domain.entity.TypeHistory;
+import org.liubility.typing.server.domain.entity.TypingHistory;
 import org.liubility.commons.dto.account.TypeHistoryDto;
 import org.mapstruct.Mapper;
 /**
@@ -15,8 +15,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface TypeHistoryMapStruct {
 
-    Page<TypeHistoryDto> toDtoPage(IPage<TypeHistory> histories);
+    Page<TypeHistoryDto> toDtoPage(IPage<TypingHistory> histories);
 
-    TypeHistory toEntity(TypeHistoryDto typeHistoryDto);
+    TypingHistory toEntity(TypeHistoryDto typeHistoryDto);
 
 }

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.mappers.ArticleMapper;
 import org.liubility.typing.server.service.ArticleService;
-import org.liubility.commons.exception.LBException;
+import org.liubility.commons.exception.LBRuntimeException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,10 +25,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Article getArticleById(Integer articleId) throws LBException {
+    public Article getArticleById(Integer articleId) {
         Article article = getArticle(new Article(articleId));
         if(article == null){
-            throw new LBException("没有该文章");
+            throw new LBRuntimeException("没有该文章");
         }
         return article;
     }

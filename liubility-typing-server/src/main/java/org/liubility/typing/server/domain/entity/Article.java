@@ -24,7 +24,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class Article extends Model<Article> {
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     private String title;
 

@@ -2,6 +2,7 @@ package org.liubility.typing.server.mappers;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.liubility.typing.server.domain.entity.Article;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +15,8 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface ArticleMapper extends BaseMapper<Article> {
+
+    Article getArticleById(@Param("id") int id);
+
+    Article getArticleByContent(@Param("title") String title,@Param("content") String content);
 }

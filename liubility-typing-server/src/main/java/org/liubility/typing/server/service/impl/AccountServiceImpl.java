@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.commons.dto.account.AccountDto;
 import org.liubility.commons.exception.AuthException;
-import org.liubility.commons.exception.LBException;
+import org.liubility.commons.exception.LBRuntimeException;
 import org.liubility.commons.jwt.JwtServiceImpl;
 import org.liubility.typing.server.mappers.AccountMapper;
 import org.liubility.typing.server.domain.entity.Account;
@@ -38,7 +38,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
-    public String login(AccountDto accountDto) throws AuthException {
+    public String login(AccountDto accountDto) {
         String password = SecureUtil.md5(accountDto.getPassword());
         AccountDto loginAccountByName = getAccountByName(accountDto.getUsername());
         if (loginAccountByName == null) {
@@ -51,12 +51,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     }
 
     @Override
-    public String register(AccountDto accountDto) throws LBException {
+    public String register(AccountDto accountDto) {
         String username = accountDto.getUsername();
         String password = SecureUtil.md5(accountDto.getPassword());
         AccountDto existAccount = getAccountByName(username);
         if (existAccount != null) {
-            throw new LBException("该用户名已存在");
+            throw new LBRuntimeException("该用户名已存在");
         }
         Account account = accountMapStruct.dtoToAccount(accountDto);
         account.setPassword(password);

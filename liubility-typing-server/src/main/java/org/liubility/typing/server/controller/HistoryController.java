@@ -2,9 +2,9 @@ package org.liubility.typing.server.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.liubility.typing.server.service.TypeHistoryService;
+import org.liubility.commons.controller.BaseController;
+import org.liubility.typing.server.service.TypingHistoryService;
 import org.liubility.commons.dto.account.HistoryArticleDto;
-import org.liubility.commons.exception.LBException;
 import org.liubility.commons.http.response.normal.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +19,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/account/history")
 @Api(tags = "历史记录")
-public class HistoryController {
+public class HistoryController extends BaseController {
 
     @Autowired
-    private TypeHistoryService typeHistoryService;
+    private TypingHistoryService typingHistoryService;
 
     @PostMapping("/uploadHistoryAndArticle")
     @ApiOperation("上传历史记录(带文章修正解决文章过长不能上传)")
-    public Result<String> uploadHistoryAndArticle(@RequestHeader Integer userId,
-                                                  @RequestBody HistoryArticleDto historyAndArticle) throws LBException {
-        historyAndArticle.getTypeHistoryDto().setUserId(userId);
-        return Result.success(typeHistoryService.uploadHistoryAndArticle(historyAndArticle));
+    public Result<String> uploadHistoryAndArticle(@RequestBody HistoryArticleDto historyAndArticle) {
+        historyAndArticle.getTypeHistoryDto().setUserId(getUserId());
+        return Result.success(typingHistoryService.uploadHistoryAndArticle(historyAndArticle));
     }
 }

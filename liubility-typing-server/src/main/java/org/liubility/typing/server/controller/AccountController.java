@@ -4,8 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liubility.commons.controller.BaseController;
 import org.liubility.commons.dto.account.AccountDto;
-import org.liubility.commons.exception.AuthException;
-import org.liubility.commons.exception.LBException;
 import org.liubility.commons.http.response.normal.Result;
 import org.liubility.typing.server.service.AccountService;
 import org.liubility.commons.jwt.JwtServiceImpl;
@@ -32,13 +30,13 @@ public class AccountController extends BaseController {
 
     @PostMapping("/login")
     @ApiOperation("登录")
-    public Result<String> login(@RequestBody AccountDto accountDto) throws AuthException {
+    public Result<String> login(@RequestBody AccountDto accountDto) {
         return Result.success(accountService.login(accountDto));
     }
 
     @PostMapping(value = "/register")
     @ApiOperation(value = "注册")
-    public Result<String> register(@RequestBody AccountDto accountDto) throws LBException {
+    public Result<String> register(@RequestBody AccountDto accountDto) {
         return Result.success(accountService.register(accountDto));
     }
 

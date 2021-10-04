@@ -3,7 +3,6 @@ package org.liubility.typing.server.controller;
 import io.swagger.annotations.ApiOperation;
 import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.service.ArticleService;
-import org.liubility.commons.exception.LBException;
 import org.liubility.commons.http.response.normal.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class ArticleController {
 
     @GetMapping("/getHistoryArticle")
     @ApiOperation("通过articleId获取文章详情")
-    public Result<Article> getArticleById(@RequestParam Integer articleId) throws LBException {
+    public Result<Article> getArticleById(@RequestParam Integer articleId) {
         return Result.success(articleService.getArticleById(articleId));
     }
 }

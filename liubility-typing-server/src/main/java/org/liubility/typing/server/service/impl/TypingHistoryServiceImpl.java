@@ -4,15 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.typing.server.domain.entity.Article;
-import org.liubility.typing.server.domain.entity.TypeHistory;
-import org.liubility.typing.server.mappers.TypeHistoryMapper;
+import org.liubility.typing.server.domain.entity.TypingHistory;
+import org.liubility.typing.server.mappers.TypingHistoryMapper;
 import org.liubility.typing.server.mapstruct.ArticleMapStruct;
 import org.liubility.typing.server.mapstruct.TypeHistoryMapStruct;
 import org.liubility.typing.server.service.ArticleService;
-import org.liubility.typing.server.service.TypeHistoryService;
+import org.liubility.typing.server.service.TypingHistoryService;
 import org.liubility.commons.dto.account.HistoryArticleDto;
 import org.liubility.commons.dto.account.TypeHistoryDto;
-import org.liubility.commons.exception.LBException;
+import org.liubility.commons.exception.LBRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class TypeHistoryServiceImpl extends ServiceImpl<TypeHistoryMapper, TypeHistory> implements TypeHistoryService {
+public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, TypingHistory> implements TypingHistoryService {
 
     @Autowired
     private TypeHistoryMapStruct typeHistoryMapStruct;
@@ -36,20 +36,20 @@ public class TypeHistoryServiceImpl extends ServiceImpl<TypeHistoryMapper, TypeH
     private ArticleService articleService;
 
     @Override
-    public IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypeHistory> historyIPage, Integer userId) {
-        LambdaQueryWrapper<TypeHistory> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(TypeHistory::getUserId, userId);
-        IPage<TypeHistory> page = this.page(historyIPage, lambdaQueryWrapper);
+    public IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> historyIPage, Integer userId) {
+        LambdaQueryWrapper<TypingHistory> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(TypingHistory::getUserId, userId);
+        IPage<TypingHistory> page = this.page(historyIPage, lambdaQueryWrapper);
         return typeHistoryMapStruct.toDtoPage(page);
     }
 
     @Override
-    public String uploadHistoryAndArticle(HistoryArticleDto historyArticleDto) throws LBException {
-        TypeHistory typeHistory = typeHistoryMapStruct.toEntity(historyArticleDto.getTypeHistoryDto());
+    public String uploadHistoryAndArticle(HistoryArticleDto historyArticleDto) {
+        TypingHistory typingHistory = typeHistoryMapStruct.toEntity(historyArticleDto.getTypeHistoryDto());
         Article article = articleMapStruct.toEntity(historyArticleDto.getArticleDto());
 
-        if(typeHistory.getTime()<0){
-            throw new LBException("成绩出现异常");
+        if (typingHistory.getTime() < 0) {
+            throw new LBRuntimeException("成绩出现异常");
         }
 
         Article oldArticle = articleService.getArticle(article);
@@ -57,19 +57,19 @@ public class TypeHistoryServiceImpl extends ServiceImpl<TypeHistoryMapper, TypeH
             if (article.insert()) {
                 oldArticle = article;
             } else {
-                throw new LBException("保存文档失败");
+                throw new LBRuntimeException("保存文档失败");
             }
         }
 
-        typeHistory.setArticleId(oldArticle.getId());
-        if (typeHistory.getParagraph() == 0) {
-            typeHistory.setParagraph(1);
+        typingHistory.setArticleId(oldArticle.getId());
+        if (typingHistory.getParagraph() == 0) {
+            typingHistory.setParagraph(1);
         }
 
-        if (typeHistory.insert()) {
+        if (typingHistory.insert()) {
             return "上传成功";
-        }else{
-            throw new LBException("上传失败");
+        } else {
+            throw new LBRuntimeException("上传失败");
         }
     }
 }

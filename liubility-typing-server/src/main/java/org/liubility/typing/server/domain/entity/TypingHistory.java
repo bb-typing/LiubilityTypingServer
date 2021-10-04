@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * @Author JDragon
@@ -20,15 +20,15 @@ import java.sql.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("type_history")
-public class TypeHistory extends Model<TypeHistory> {
+@TableName("typing_history")
+public class TypingHistory extends Model<TypingHistory> {
 
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
-    private int userId;
+    private Integer userId;
 
-    private int articleId;
+    private Integer articleId;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date typeDate;
@@ -60,6 +60,8 @@ public class TypeHistory extends Model<TypeHistory> {
     private int paragraph;
 
     private boolean mobile;
+
+    private Integer matchType;
 
     @Override
     protected Serializable pkVal() {
