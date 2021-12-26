@@ -1,6 +1,11 @@
 package org.liubility.typing.server.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import org.liubility.commons.dto.annotation.TableHeader;
+import org.liubility.commons.interceptor.translation.Translate;
+import org.liubility.commons.interceptor.translation.Translation;
+import org.liubility.typing.server.enums.MobileEnum;
 
 import java.sql.Date;
 
@@ -10,44 +15,61 @@ import java.sql.Date;
  *
  * @author : Jdragon
  */
-
+@Data
+@Translation
 public class TypingHistoryVO {
     private int id;
 
     private int userId;
 
+    private int articleId;
+
+    @TableHeader("比赛日期")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date typeDate;
 
+    @TableHeader("参赛者")
+    private String userName;
+
+    @TableHeader("速度")
     private double speed;
 
+    @TableHeader("击键")
     private double keySpeed;
 
+    @TableHeader("码长")
     private double keyLength;
 
+    @TableHeader("字数")
     private int number;
 
+    @TableHeader("回改")
     private int deleteText;
 
+    @TableHeader("退格")
     private int deleteNum;
 
+    @TableHeader("错字")
     private int mistake;
 
+    @TableHeader("选重")
     private int repeatNum;
 
+    @TableHeader("键准")
     private double keyAccuracy;
 
+    @TableHeader("键法")
     private double keyMethod;
 
+    @TableHeader("打词")
     private double wordRate;
 
+    @TableHeader("时间")
     private double time;
 
-    private int articleId;
+    private boolean mobile;
 
-    private int paragraph;
-
-    private boolean isMobile;
-
-    private String userName;
+    @TableHeader("设备类型")
+    @Translate(dict = MobileEnum.class, byField = "mobile")
+    private String mobileCN;
 }

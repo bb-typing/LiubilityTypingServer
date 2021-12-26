@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.commons.exception.LBException;
 import org.liubility.commons.exception.LBRuntimeException;
 import org.liubility.commons.http.response.normal.Result;
+import org.liubility.commons.http.response.table.PageTable;
+import org.liubility.commons.http.response.table.TableFactory;
+import org.liubility.commons.http.response.table.TableRef;
 import org.liubility.commons.util.ArticleUtil;
 import org.liubility.commons.util.TimingMap;
 import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.domain.entity.TypingHistory;
 import org.liubility.typing.server.domain.entity.TypingMatch;
+import org.liubility.typing.server.domain.vo.TypingHistoryVO;
 import org.liubility.typing.server.domain.vo.TypingMatchVO;
 import org.liubility.typing.server.mappers.ArticleMapper;
 import org.liubility.typing.server.mappers.TypingHistoryMapper;
@@ -20,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * @Author JDragon
@@ -95,5 +102,11 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
         } else {
             throw new LBRuntimeException("赛文已过期");
         }
+    }
+
+    @Override
+    public PageTable<TypingHistoryVO> getMatchAch(Date date, Integer matchType, Boolean mobile) {
+        List<TypingHistoryVO> typingMatchHistoryWithName = typingHistoryMapper.getTypingMatchHistoryWithName(date, matchType, mobile);
+        return TableFactory.buildPageTable(new TableRef<TypingHistoryVO>(typingMatchHistoryWithName){});
     }
 }

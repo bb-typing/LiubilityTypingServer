@@ -7,6 +7,6 @@
     
     <select id="getTypingMatchHistoryWithName" resultType="org.liubility.typing.server.domain.vo.TypingHistoryVO">
         select u.username,h.* from typing_history as h join base_account as u on u.id=h.user_id
-        where mobile = 0 and match_type = 1 and typeDate = #{typeDate} order by speed DESC
+        where mobile = #{mobile} and match_type = #{matchType} and type_date = #{typeDate} order by speed DESC
     </select>
 </mapper>
