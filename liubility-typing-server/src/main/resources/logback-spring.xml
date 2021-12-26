@@ -6,7 +6,7 @@ debug：当此属性设置为true时，将打印出logback内部日志信息，�
 -->
 <configuration scan="false" scanPeriod="60 seconds" debug="false">
     <!--自定义颜色配置-->
-    <conversionRule conversionWord="customColor" converterClass="org.liubility.typing.server.LogbackConfig"/>
+    <conversionRule conversionWord="customColor" converterClass="org.liubility.typing.server.config.LogbackConfig"/>
     <!-- 定义日志的根目录 -->
     <property name="LOG_HOME" value="log" />
     <!-- 定义日志文件名称 -->
