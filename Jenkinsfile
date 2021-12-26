@@ -2,8 +2,8 @@
 pipeline {
     agent none
     parameters {
-        string(name: 'targetPath', defaultValue: 'LiubilityTypingServer/liubility-typing-server/target/', description: '生成jar包路径')
-        string(name: 'serverPath', defaultValue: '/var/local/src/liubility/typing', description: '远程服务路径')
+        string(name: 'targetPath', defaultValue: 'liubility-typing-server/target/', description: '生成jar包路径')
+        string(name: 'serverPath', defaultValue: '/usr/local/src/liubility/typing', description: '远程服务路径')
         string(name: 'remoteIp', defaultValue: '192.168.10.150', description: '部署到远程IP地址')
         string(name: 'remoteUser', defaultValue: 'root', description: '部署到远程用户')
         string(name: 'remotePort', defaultValue: '22', description: 'ssh的端口')
