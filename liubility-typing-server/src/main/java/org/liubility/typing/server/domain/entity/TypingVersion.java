@@ -4,33 +4,32 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
- * @Author JDragon
- * @Date 2021.02.11 上午 12:55
- * @Email 1061917196@qq.com
- * @Des:
+ * <p>跟打器后端版本</p>
+ * <p>create time: 2021/10/5 16:19 </p>
+ *
+ * @author : Jdragon
  */
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@TableName("base_account")
-public class Account extends Model<Account> {
+@TableName("typing_version")
+public class TypingVersion extends Model<TypingVersion> {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private String username;
+    private String appVersion;
 
-    private String password;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateDate;
 
     @Override
     protected Serializable pkVal() {

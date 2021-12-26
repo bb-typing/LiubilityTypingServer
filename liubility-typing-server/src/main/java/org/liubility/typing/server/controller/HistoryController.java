@@ -3,6 +3,7 @@ package org.liubility.typing.server.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liubility.commons.controller.BaseController;
+import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.service.TypingHistoryService;
 import org.liubility.commons.dto.account.HistoryArticleDto;
 import org.liubility.commons.http.response.normal.Result;
@@ -28,6 +29,6 @@ public class HistoryController extends BaseController {
     @ApiOperation("上传历史记录(带文章修正解决文章过长不能上传)")
     public Result<String> uploadHistoryAndArticle(@RequestBody HistoryArticleDto historyAndArticle) {
         historyAndArticle.getTypeHistoryDto().setUserId(getUserId());
-        return Result.success(typingHistoryService.uploadHistoryAndArticle(historyAndArticle));
+        return Result.successMsg(typingHistoryService.uploadHistoryAndArticle(historyAndArticle));
     }
 }

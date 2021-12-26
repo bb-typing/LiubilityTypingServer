@@ -36,6 +36,6 @@ public class TypingMatchController extends BaseController {
     @PostMapping("/uploadTljMatchAch")
     @ApiOperation("上传生稿赛成绩")
     public Result<String> uploadTljMatchAch(@ApiParam(name = "typingHistory", value = "历史成绩Json") @RequestBody TypingHistory typingHistory) {
-        return Result.success(typingMatchService.uploadMatch(getUserId(), typingHistory));
+        return Result.successMsg(typingMatchService.uploadMatch(getUserId(), typingHistory));
     }
 }

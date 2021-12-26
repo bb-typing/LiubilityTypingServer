@@ -6,23 +6,24 @@
         <artifactId>liubility-parent</artifactId>
         <groupId>org.liubility</groupId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../liubility-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>liubility-typing-server</artifactId>
-    <version>${parent.version}</version>
+    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>org.liubility</groupId>
             <artifactId>liubility-api</artifactId>
-            <version>${parent.version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.liubility</groupId>
             <artifactId>liubility-commons</artifactId>
-            <version>${parent.version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
 
@@ -117,14 +118,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <source>8</source>-->
+<!--                    <target>8</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>
