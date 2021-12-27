@@ -46,7 +46,7 @@ public class TypingMatchController extends BaseController {
 
     @GetMapping("/getPCTljMatchAchByDate")
     @ApiOperation("根据日期获取生稿赛电脑成绩排名")
-    public Result<PageTable<TypingHistoryVO>> getPCTljMatchAchByDate(@RequestParam(defaultValue = "#{new java.util.Date()}") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date date,
+    public Result<PageTable<TypingHistoryVO>> getPCTljMatchAchByDate(@RequestParam(defaultValue = "#{new java.util.Date()}") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
                                                                      @RequestParam(defaultValue = "1") Integer matchType,
                                                                      @RequestParam(defaultValue = "0") Boolean mobile) {
         return Result.success(typingMatchService.getMatchAch(date, matchType, mobile));
