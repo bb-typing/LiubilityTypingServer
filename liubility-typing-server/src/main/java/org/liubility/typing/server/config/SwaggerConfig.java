@@ -1,18 +1,20 @@
 package org.liubility.typing.server.config;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.ParameterBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.builders.*;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.schema.ModelRef;
+import springfox.documentation.schema.ScalarType;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Parameter;
+import springfox.documentation.service.ParameterType;
+import springfox.documentation.service.RequestParameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -27,39 +29,39 @@ import java.util.List;
  * @Description: swagger2的api文档配置
  */
 @Configuration
-@EnableSwagger2
+@EnableOpenApi
 @EnableKnife4j
 public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket createRestApi() {
-        //添加head参数配置start
-        ParameterBuilder tokenPar = new ParameterBuilder();
-        List<Parameter> pars = new ArrayList<>();
-        tokenPar.name("Authorization").
-                description("令牌")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .required(false)
-                .build();
-
-        pars.add(tokenPar.build());
-
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.liubility"))
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build()
-                .globalOperationParameters(pars);//注意这里
+                .globalRequestParameters(getGlobalRequestParameters());//注意这里
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("liubility API 文档")
-                .description("liubility API 网关接口")
+                .title("BB-Typing API 文档")
+                .description("BB-Typing API 网关接口")
                 .version("1.0.0")
                 .build();
+    }
+
+    private List<RequestParameter> getGlobalRequestParameters() {
+        List<RequestParameter> parameters = new ArrayList<>();
+        parameters.add(new RequestParameterBuilder()
+                .name("Authorization")
+                .description("令牌")
+                .required(false)
+                .in(ParameterType.HEADER)
+                .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING)))
+                .build());
+        return parameters;
     }
 
     @Override
@@ -73,6 +75,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         registry.addResourceHandler("doc.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
     }
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
 //        registry.addRedirectViewController("/", "/doc.html");
