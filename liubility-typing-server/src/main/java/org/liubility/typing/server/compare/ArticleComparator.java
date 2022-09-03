@@ -103,8 +103,8 @@ public class ArticleComparator {
         ArticleComparator am = new ArticleComparator();
         List<Integer> originSymbolSign = new ArrayList<>();
         ArrayList<int[]> strMatch;
-        char[] originChars = origin.toCharArray();
-        char[] typedChars = typed.toCharArray();
+        char[] originChars;
+        char[] typedChars;
         if (ignoreSymbols) {
             StringBuilder newOrigin = new StringBuilder();
             StringBuilder newTyped = new StringBuilder();
