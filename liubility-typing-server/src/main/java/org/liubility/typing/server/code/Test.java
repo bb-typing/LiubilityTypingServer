@@ -19,7 +19,7 @@ public class Test {
         wordLib.merge(symbol);
 
         TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol);
-        SubscriptInstance[] parse = trieWordParser.parse("我是不知道是谁搞事哦！你不知道，我也不知道。");
+        SubscriptInstance[] parse = trieWordParser.parse("应该可以了，该完善的都完善了");
         String s = trieWordParser.printCode(parse);
         System.out.println(s);
     }

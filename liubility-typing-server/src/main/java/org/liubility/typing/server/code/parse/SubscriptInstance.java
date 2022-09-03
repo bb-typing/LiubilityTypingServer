@@ -13,11 +13,6 @@ import java.util.*;
 @Data
 public class SubscriptInstance {
 
-    private int next;//下一跳
-
-    @JsonIgnore
-    private Map<Integer, TreeMap<Integer, PreInfo>> preInfoMap;//上一跳
-
     private String word;
 
     private String wordCode;
@@ -27,6 +22,11 @@ public class SubscriptInstance {
     private String wordsCode;
 
     private String type;
+
+    private int next;//下一跳
+
+    @JsonIgnore
+    private Map<Integer, TreeMap<Integer, PreInfo>> preInfoMap;//上一跳
 
     @JsonIgnore
     private boolean useSign;
@@ -53,8 +53,8 @@ public class SubscriptInstance {
         }
     }
 
-    public PreInfo getMinPre(int codeLength) {
-        TreeMap<Integer, PreInfo> preInfoTreeMap = preInfoMap.get(codeLength);
+    public PreInfo getMinPre() {
+        TreeMap<Integer, PreInfo> preInfoTreeMap = preInfoMap.get(codeLengthTemp);
         if (preInfoTreeMap == null || preInfoTreeMap.firstEntry() == null) {
             return null;
         }
@@ -84,10 +84,5 @@ public class SubscriptInstance {
             this.preInfoMap.put(length, map);
         }
         map.put(pre, new PreInfo(pre, words, wordsCode, type));
-    }
-
-    @JsonIgnore
-    public Map<Integer, PreInfo> getShortCodePreInfo() {
-        return preInfoMap.get(codeLengthTemp);
     }
 }

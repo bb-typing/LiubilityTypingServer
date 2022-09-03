@@ -52,7 +52,7 @@ public class TrieWordParser {
                         && codeTemp.endsWith("_")
                         && symbolLib.getCode(subscriptInstances[index + 1].getWord()) != null
                         && !(articleLength > index + 2
-                        && wordLib.getNode(subscriptInstances[index + 1].getWord() + subscriptInstances[index + 2].getWord()) == null)
+                        && wordLib.getNode(subscriptInstances[index + 1].getWord() + subscriptInstances[index + 2].getWord()) != null)
                 ) {
                     codeTemp = codeTemp.substring(0, codeTemp.length() - 1);
                 }
@@ -83,7 +83,7 @@ public class TrieWordParser {
                                 && symbolLib.getCode(subscriptInstances[cursor + 1].getWord()) != null
                                 && !(articleMaxIndex >= cursor + 2
                                 && wordLib.getNode(subscriptInstances[cursor + 1].getWord()
-                                + subscriptInstances[cursor + 2].getWord()) == null)
+                                + subscriptInstances[cursor + 2].getWord()) != null)
                         ) {
                             codeTemp = codeTemp.substring(0, codeTemp.length() - 1);
                         }
@@ -127,27 +127,26 @@ public class TrieWordParser {
               直接将遍历提前到bestPre
              */
             for (int i = article.length() - 1; i >= 0; i--) {
-                boolean sign = true;
                 SubscriptInstance subscriptInstance = subscriptInstances[i];
-                int codeLengthTemp = subscriptInstance.getCodeLengthTemp();
-                PreInfo preInfo = subscriptInstance.getMinPre(codeLengthTemp);
+                PreInfo preInfo = subscriptInstance.getMinPre();
                 int pre = 0;
-                if (preInfo == null)
-                    sign = false;
-                else
+                if (preInfo != null) {
                     pre = preInfo.getPre();
-                if (sign && !subscriptInstances[pre].isUseWordSign()
+                }
+                //最短编码词提
+                if (preInfo != null && !subscriptInstances[pre].isUseWordSign()
                         && !(!subscriptInstances[pre].isUseSign() && subscriptInstances[i].isUseSign())
                 ) {
-                    subscriptInstances[pre].setType(subscriptInstances[i].getShortCodePreInfo().get(pre).getType());
                     subscriptInstances[pre].setNext(i);
                     subscriptInstances[pre].setUseWordSign(true);
+                    subscriptInstances[pre].setType(preInfo.getType());
                     subscriptInstances[pre].setWords(preInfo.getWords());
                     subscriptInstances[pre].setWordsCode(preInfo.getWordsCode());
                     for (int i2 = pre; i2 <= i; i2++) {
                         subscriptInstances[i2].setUseSign(true);
                     }
                 }
+                //错过最短编码后的动态词提
                 for (Integer key : subscriptInstance.getPreInfoMap().keySet()) {
                     TreeMap<Integer, PreInfo> preInfoTreeMap = subscriptInstances[i].getPreInfoMap().get(key);
                     for (Map.Entry<Integer, PreInfo> entry : preInfoTreeMap.entrySet()) {
@@ -161,8 +160,9 @@ public class TrieWordParser {
                         }
                     }
                 }
-                if (sign)
+                if (preInfo != null) {
                     i = pre;
+                }
             }
             return subscriptInstances;
         } catch (Exception e) {
