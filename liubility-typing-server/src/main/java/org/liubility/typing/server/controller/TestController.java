@@ -6,10 +6,14 @@ import org.liubility.commons.http.response.normal.Result;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.code.parse.TrieWordParser;
+import org.liubility.typing.server.compare.ArticleComparator;
+import org.liubility.typing.server.compare.ComparisonItem;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @Author: JDragon
@@ -52,4 +56,15 @@ public class TestController {
         return Result.success(s);
     }
 
+    @GetMapping(value = "/compare")
+    @ApiOperation("看打听打提交成绩后的对比")
+    public Result<List<ComparisonItem>> codeLength(@RequestParam String origin,
+                                                   @RequestParam String typed,
+                                                   @RequestParam boolean ignoreSymbols) {
+        TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
+        symbol.init();
+        ArticleComparator articleComparator = new ArticleComparator();
+        List<ComparisonItem> comparisonItemList = articleComparator.comparison(origin, typed, ignoreSymbols, symbol);
+        return Result.success(comparisonItemList);
+    }
 }
