@@ -17,10 +17,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TrieWordLib extends WordLib {
 
-    private final TrieNode root = new TrieNode();
+    private TrieNode root;
 
     public TrieWordLib(String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
         super(wordLibFilePath, filterDuplicateSymbols, codeMaxLength, leader);
+    }
+
+    @Override
+    public void init() {
+        this.root = new TrieNode();
+        super.init();
     }
 
     @Override
