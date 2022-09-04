@@ -9,10 +9,7 @@ import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.code.parse.TrieWordParser;
 import org.liubility.typing.server.compare.ArticleComparator;
 import org.liubility.typing.server.compare.ComparisonItem;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,14 +33,14 @@ public class TestController {
 
     private final TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()));
 
-    @GetMapping(value = "/typingTips")
+    @PostMapping(value = "/typingTips")
     @ApiOperation("词提测试")
     public Result<SubscriptInstance[]> typingTips(@RequestParam String code) {
         SubscriptInstance[] parse = trieWordParser.parse(code);
         return Result.success(parse);
     }
 
-    @GetMapping(value = "/codeLength")
+    @PostMapping(value = "/codeLength")
     @ApiOperation("理论编码")
     public Result<String> codeLength(@RequestParam String code) {
         SubscriptInstance[] parse = trieWordParser.parse(code);
@@ -51,7 +48,7 @@ public class TestController {
         return Result.success(s);
     }
 
-    @GetMapping(value = "/compare")
+    @PostMapping(value = "/compare")
     @ApiOperation("看打听打提交成绩后的对比")
     public Result<List<ComparisonItem>> codeLength(@RequestParam String origin,
                                                    @RequestParam String typed,
