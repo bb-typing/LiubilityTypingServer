@@ -3,6 +3,7 @@ package org.liubility.typing.server.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liubility.commons.http.response.normal.Result;
+import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.code.parse.TrieWordParser;
@@ -25,17 +26,19 @@ import java.util.List;
 @Api(tags = "测试")
 public class TestController {
 
+    private final TrieWordLib wordLib = new TrieWordLib("wordlib.txt", "23456789", 4, ";'");
+
+    private final TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
+
+    {
+        wordLib.merge(symbol);
+    }
+
+    private final TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()));
+
     @GetMapping(value = "/typingTips")
     @ApiOperation("词提测试")
     public Result<SubscriptInstance[]> typingTips(@RequestParam String code) {
-        TrieWordLib wordLib = new TrieWordLib("wordlib.txt", "23456789", 4, ";'");
-        wordLib.init();
-        TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
-        symbol.init();
-
-        wordLib.merge(symbol);
-
-        TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol);
         SubscriptInstance[] parse = trieWordParser.parse(code);
         return Result.success(parse);
     }
@@ -43,14 +46,6 @@ public class TestController {
     @GetMapping(value = "/codeLength")
     @ApiOperation("理论编码")
     public Result<String> codeLength(@RequestParam String code) {
-        TrieWordLib wordLib = new TrieWordLib("wordlib.txt", "23456789", 4, ";'");
-        wordLib.init();
-        TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
-        symbol.init();
-
-        wordLib.merge(symbol);
-
-        TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol);
         SubscriptInstance[] parse = trieWordParser.parse(code);
         String s = trieWordParser.printCode(parse);
         return Result.success(s);
@@ -61,8 +56,6 @@ public class TestController {
     public Result<List<ComparisonItem>> codeLength(@RequestParam String origin,
                                                    @RequestParam String typed,
                                                    @RequestParam boolean ignoreSymbols) {
-        TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
-        symbol.init();
         ArticleComparator articleComparator = new ArticleComparator();
         List<ComparisonItem> comparisonItemList = articleComparator.comparison(origin, typed, ignoreSymbols, symbol);
         return Result.success(comparisonItemList);

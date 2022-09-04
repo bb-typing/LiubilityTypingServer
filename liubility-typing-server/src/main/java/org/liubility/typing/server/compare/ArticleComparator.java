@@ -97,7 +97,6 @@ public class ArticleComparator {
      * @param typed         对比文章
      * @param ignoreSymbols 是否忽略符号
      * @param symbolWordLib 符号库
-     * @return
      */
     public List<ComparisonItem> comparison(String origin, String typed, boolean ignoreSymbols, WordLib symbolWordLib) {
         ArticleComparator am = new ArticleComparator();

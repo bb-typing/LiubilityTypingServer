@@ -1,10 +1,6 @@
 package org.liubility.typing.server.code.convert;
 
 import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author: JDragon

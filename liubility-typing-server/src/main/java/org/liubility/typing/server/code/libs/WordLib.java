@@ -1,15 +1,15 @@
 package org.liubility.typing.server.code.libs;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.liubility.typing.server.code.convert.MockTypeConvert;
-import org.liubility.typing.server.code.convert.WordTypeConvert;
 
 import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -54,9 +54,6 @@ public class WordLib {
     @Getter
     private final Map<Integer, Map<String, String>> wordCodeDictMap = new TreeMap<>();//词组码表
 
-    @Getter
-    private final WordTypeConvert typeConvert;
-
     protected final Map<String, Integer> codeWordDict = new HashMap<>();
 
     public WordLib(String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
@@ -64,7 +61,7 @@ public class WordLib {
         this.codeMaxLength = codeMaxLength;
         this.leader = leader.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
         this.filterDuplicateSymbols = filterDuplicateSymbols.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
-        this.typeConvert = new MockTypeConvert(filterDuplicateSymbols, getDefaultUpSymbol());
+        this.init();
     }
 
     /**
