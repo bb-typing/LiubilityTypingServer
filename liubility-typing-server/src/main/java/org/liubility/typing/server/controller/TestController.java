@@ -2,6 +2,7 @@ package org.liubility.typing.server.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import org.liubility.commons.http.response.normal.Result;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
@@ -35,26 +36,36 @@ public class TestController {
 
     @PostMapping(value = "/typingTips")
     @ApiOperation("词提测试")
-    public Result<SubscriptInstance[]> typingTips(@RequestParam String code) {
-        SubscriptInstance[] parse = trieWordParser.parse(code);
+    public Result<SubscriptInstance[]> typingTips(@RequestBody CodeParam codeParam) {
+        SubscriptInstance[] parse = trieWordParser.parse(codeParam.getCode());
         return Result.success(parse);
     }
 
     @PostMapping(value = "/codeLength")
     @ApiOperation("理论编码")
-    public Result<String> codeLength(@RequestParam String code) {
-        SubscriptInstance[] parse = trieWordParser.parse(code);
+    public Result<String> codeLength(@RequestBody CodeParam codeParam) {
+        SubscriptInstance[] parse = trieWordParser.parse(codeParam.getCode());
         String s = trieWordParser.printCode(parse);
         return Result.success(s);
     }
 
     @PostMapping(value = "/compare")
     @ApiOperation("看打听打提交成绩后的对比")
-    public Result<List<ComparisonItem>> codeLength(@RequestParam String origin,
-                                                   @RequestParam String typed,
-                                                   @RequestParam boolean ignoreSymbols) {
+    public Result<List<ComparisonItem>> compare(@RequestBody CodeParam codeParam) {
         ArticleComparator articleComparator = new ArticleComparator();
-        List<ComparisonItem> comparisonItemList = articleComparator.comparison(origin, typed, ignoreSymbols, symbol);
+        List<ComparisonItem> comparisonItemList = articleComparator.comparison(codeParam.getOrigin(), codeParam.getTyped(), codeParam.isIgnoreSymbols(), symbol);
         return Result.success(comparisonItemList);
+    }
+
+    @Data
+    public static class CodeParam {
+
+        private String code;
+
+        private String origin;
+
+        private String typed;
+
+        private boolean ignoreSymbols;
     }
 }
