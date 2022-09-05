@@ -44,10 +44,10 @@ public class CompareFeelDeviationWeights extends CompareWeights {
         int wordsCodeLength = code.length();
         String feelDeviationCode = code;
         if (StringUtils.isNoneBlank(preWordsCode)) {
-            feelDeviationCode += preWordsCode.substring(preWordsCode.length() - 1);
+            feelDeviationCode = preWordsCode.substring(preWordsCode.length() - 1) + feelDeviationCode;
         }
         int wordFeelDeviation = 0;
-        int feelType = 0;
+        int feelType = -1;
         List<String> feelDeviationCodeChars = feelDeviationCode.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
         for (String feelDeviationCodeChar : feelDeviationCodeChars) {
             for (int i = 0; i < keyBoardPartitions.size(); i++) {

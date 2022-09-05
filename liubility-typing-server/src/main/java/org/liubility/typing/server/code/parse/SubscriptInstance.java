@@ -67,11 +67,7 @@ public class SubscriptInstance {
     }
 
     public PreInfo getMinPre() {
-        Map.Entry<Double, TreeMap<Integer, PreInfo>> entry = preInfoMap.firstEntry();
-        if (entry == null) {
-            return null;
-        }
-        TreeMap<Integer, PreInfo> preInfoTreeMap = entry.getValue();
+        TreeMap<Integer, PreInfo> preInfoTreeMap = preInfoMap.get(weights);
         if (preInfoTreeMap == null || preInfoTreeMap.firstEntry() == null) {
             return null;
         }

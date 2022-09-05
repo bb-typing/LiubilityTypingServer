@@ -35,8 +35,15 @@ public class TestController {
 
     {
         wordLib.merge(symbol);
-        compareFeelDeviationWeights.addKeyBoardPartition("qwertasdfgzxcv_");
-        compareFeelDeviationWeights.addKeyBoardPartition("yuiophjkl;'bnm,./");
+        compareFeelDeviationWeights.addKeyBoardPartition("1qaz");
+        compareFeelDeviationWeights.addKeyBoardPartition("2wsx");
+        compareFeelDeviationWeights.addKeyBoardPartition("3edc");
+        compareFeelDeviationWeights.addKeyBoardPartition("45rfvtgb");
+        compareFeelDeviationWeights.addKeyBoardPartition("67yhnujm");
+        compareFeelDeviationWeights.addKeyBoardPartition("8ik,");
+        compareFeelDeviationWeights.addKeyBoardPartition("9ol.");
+        compareFeelDeviationWeights.addKeyBoardPartition("0p;/'");
+        compareFeelDeviationWeights.addKeyBoardPartition("_");
     }
 
     private final TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);

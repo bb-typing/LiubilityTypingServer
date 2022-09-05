@@ -32,12 +32,18 @@ public class Test {
         TrieWordLib wordLib = new TrieWordLib("wordlib.txt", "23456789", 4, ";'");
         TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
         wordLib.merge(symbol);
-
         CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights();
-        compareFeelDeviationWeights.addKeyBoardPartition("qwertasdfgzxcv_");
-        compareFeelDeviationWeights.addKeyBoardPartition("yuiophjkl;'bnm,./");
+        compareFeelDeviationWeights.addKeyBoardPartition("1qaz");
+        compareFeelDeviationWeights.addKeyBoardPartition("2wsx");
+        compareFeelDeviationWeights.addKeyBoardPartition("3edc");
+        compareFeelDeviationWeights.addKeyBoardPartition("45rfvtgb");
+        compareFeelDeviationWeights.addKeyBoardPartition("67yhnujm");
+        compareFeelDeviationWeights.addKeyBoardPartition("8ik,");
+        compareFeelDeviationWeights.addKeyBoardPartition("9ol.");
+        compareFeelDeviationWeights.addKeyBoardPartition("0p;/'");
+        compareFeelDeviationWeights.addKeyBoardPartition("_");
         TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
-        SubscriptInstance[] parse = trieWordParser.parse("main函数内，调用算法类的入口吗。");
+        SubscriptInstance[] parse = trieWordParser.parse("我很快地明白这一切。毕竟，这次体验让我更加认识自我。我的中心认同是自我而非工作，虽然后者也颇重要。哦，几乎忘了告诉你我的新工作，薪资比原来的还多。尽管经历了一段不算短的黑暗期，但最后的结果令我十分满意。");
         String s = trieWordParser.printCode(parse);
         System.out.println(s);
     }
