@@ -31,7 +31,7 @@ public class Test {
         TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
         wordLib.merge(symbol);
         TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()));
-        SubscriptInstance[] parse = trieWordParser.parse("应该可以了，该完善的都完善了");
+        SubscriptInstance[] parse = trieWordParser.parse("应该可以了，该完善的都完善了。");
         String s = trieWordParser.printCode(parse);
         System.out.println(s);
     }

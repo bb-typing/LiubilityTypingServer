@@ -45,17 +45,22 @@ public class TrieWordParser {
     }
 
     /**
-     * 顶，最后一码为空格码，下一码为顶屏码，并排除顶屏符合与后方组成符号词语的情况
+     * 删除顶屏符
      *
      * @param codeTemp           计算顶屏的编码
      * @param subscriptInstances 文章
      * @param cursor             计算下标
      */
     public String deleteDefaultUpSymbol(String codeTemp, SubscriptInstance[] subscriptInstances, Integer cursor) {
-        if (subscriptInstances.length - 1 >= cursor + 2 && codeTemp.endsWith(wordLib.getDefaultUpSymbol())
+        int maxIndex = subscriptInstances.length - 1;
+        //codeTemp最后一位是否为上屏符 &&
+        //codeTemp后一位是否是顶屏符号 &&
+        //codeTemp后是否不为顶屏符号为首的词
+        if (maxIndex >= cursor + 1
+                && codeTemp.endsWith(wordLib.getDefaultUpSymbol())
                 && symbolLib.getCode(subscriptInstances[cursor + 1].getWord()) != null
-                && wordLib.getNode(subscriptInstances[cursor + 1].getWord()
-                + subscriptInstances[cursor + 2].getWord()) == null
+                && (maxIndex < cursor + 2 ||
+                wordLib.getNode(subscriptInstances[cursor + 1].getWord() + subscriptInstances[cursor + 2].getWord()) == null)
         ) {
             codeTemp = codeTemp.substring(0, codeTemp.length() - 1);
         }
@@ -93,7 +98,7 @@ public class TrieWordParser {
 
             subscriptInstances[index] = subscriptInstance;
         }
-        subscriptInstances[0].setCodeLengthTemp(subscriptInstances[0].getWordCode().length());
+//        subscriptInstances[0].setCodeLengthTemp(subscriptInstances[0].getWordCode().length());
         return subscriptInstances;
     }
 
@@ -135,16 +140,16 @@ public class TrieWordParser {
               有->分支2：[说明该处必为某词的最后一字]（该下标最短编码长度）是否大于（上一跳最短编码长度+该字符编码长度）
                     是->说明上一跳的词不为最短编码，将上一跳删除，并将该处最短编码设置为后者。
              */
-            if (index > 0) {
-                int wordCodeLength = subscriptInstances[index].getWordCode().length();
-                int thisCodeLength = subscriptInstances[index].getCodeLengthTemp();
-                int nextCodeLengthTemp = preCodeLengthTemp + wordCodeLength;
-                if (thisCodeLength == 0) {
-                    subscriptInstances[index].setCodeLengthTemp(nextCodeLengthTemp);
-                } else if (thisCodeLength > nextCodeLengthTemp) {
-                    subscriptInstances[index].setCodeLengthTemp(nextCodeLengthTemp);
-                }
+//            if (index > 0) {
+            int wordCodeLength = subscriptInstances[index].getWordCode().length();
+            int thisCodeLength = subscriptInstances[index].getCodeLengthTemp();
+            int nextCodeLengthTemp = preCodeLengthTemp + wordCodeLength;
+            if (thisCodeLength == 0) {
+                subscriptInstances[index].setCodeLengthTemp(nextCodeLengthTemp);
+            } else if (thisCodeLength > nextCodeLengthTemp) {
+                subscriptInstances[index].setCodeLengthTemp(nextCodeLengthTemp);
             }
+//            }
         }
     }
 
