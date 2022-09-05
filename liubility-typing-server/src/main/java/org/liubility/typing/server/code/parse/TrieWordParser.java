@@ -1,6 +1,7 @@
 package org.liubility.typing.server.code.parse;
 
 import lombok.extern.slf4j.Slf4j;
+import org.liubility.typing.server.code.compare.CompareWeights;
 import org.liubility.typing.server.code.convert.WordTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance.PreInfo;
@@ -22,10 +23,13 @@ public class TrieWordParser {
 
     private final WordTypeConvert typeConvert;
 
-    public TrieWordParser(TrieWordLib wordLib, TrieWordLib symbolLib, WordTypeConvert typeConvert) {
+    private final CompareWeights compareWeights;
+
+    public TrieWordParser(TrieWordLib wordLib, TrieWordLib symbolLib, WordTypeConvert typeConvert, CompareWeights compareWeights) {
         this.wordLib = wordLib;
         this.symbolLib = symbolLib;
         this.typeConvert = typeConvert;
+        this.compareWeights = compareWeights;
     }
 
     public SubscriptInstance[] parse(String article) {
@@ -51,7 +55,7 @@ public class TrieWordParser {
      * @param subscriptInstances 文章
      * @param cursor             计算下标
      */
-    public String deleteDefaultUpSymbol(String codeTemp, SubscriptInstance[] subscriptInstances, Integer cursor) {
+    private String deleteDefaultUpSymbol(String codeTemp, SubscriptInstance[] subscriptInstances, Integer cursor) {
         int maxIndex = subscriptInstances.length - 1;
         //codeTemp最后一位是否为上屏符 &&
         //codeTemp后一位是否是顶屏符号 &&
@@ -73,7 +77,7 @@ public class TrieWordParser {
      * 判断该下标字符是否在单字码表中，如果无，则判断是否为数组或字母，是则直接设置codeTemp为字符自身
      * 构造函数创建实例。详见SubscriptInstance构造方法
      */
-    public SubscriptInstance[] createSubscriptInstance(String article) {
+    private SubscriptInstance[] createSubscriptInstance(String article) {
         SubscriptInstance[] subscriptInstances = new SubscriptInstance[article.length()];
         int articleLength = article.length();
         String codeTemp, strTemp;
@@ -83,13 +87,12 @@ public class TrieWordParser {
             char charTemp = strTemp.toCharArray()[0];
             codeTemp = wordLib.getCode(strTemp);
             if (codeTemp == null) {
-                codeTemp = symbolLib.getCode(strTemp);
-                if (codeTemp == null) {
-                    codeTemp = strTemp + "?";
-                } else if ((charTemp >= 'a' && charTemp <= 'z')
+                if ((charTemp >= 'a' && charTemp <= 'z')
                         || (charTemp >= 'A' && charTemp <= 'Z')
                         || (charTemp >= '0' && charTemp <= '9')) {
                     codeTemp = strTemp;
+                } else if ((codeTemp = symbolLib.getCode(strTemp)) == null) {
+                    codeTemp = strTemp + "?";
                 }
             } else {
                 codeTemp = deleteDefaultUpSymbol(codeTemp, subscriptInstances, index);
@@ -104,13 +107,11 @@ public class TrieWordParser {
     /**
      * 正向遍历进行词语填充与计算码长
      */
-    public void fillInWords(SubscriptInstance[] subscriptInstances) {
+    private void fillInWords(SubscriptInstance[] subscriptInstances) {
         String codeTemp, strTemp;
         int articleLength = subscriptInstances.length;
         for (int index = 0; index < articleLength; index++) {
             int articleMaxIndex = articleLength - 1;
-            //获取前一字符的最短编码长度。
-            int preCodeLengthTemp = index == 0 ? 0 : subscriptInstances[index - 1].getCodeLengthTemp();
             //判断每个长度是否有词
             int cursor = index;
             strTemp = subscriptInstances[index].getWord();
@@ -122,38 +123,19 @@ public class TrieWordParser {
                 node = node.getChildren().get(currentWord);
                 if (node != null && node.getCode() != null) {
                     codeTemp = deleteDefaultUpSymbol(node.getCode(), subscriptInstances, cursor);
-                    int nextCodeLengthTemp = preCodeLengthTemp + codeTemp.length();
-                    // TODO type需要重写
-                    subscriptInstances[cursor].addPre(nextCodeLengthTemp, index, strTemp, codeTemp, typeConvert.convert(codeTemp));
-                    if (subscriptInstances[cursor].getCodeLengthTemp() == 0 ||
-                            subscriptInstances[cursor].getCodeLengthTemp() > nextCodeLengthTemp) {
-                        subscriptInstances[cursor].setCodeLengthTemp(nextCodeLengthTemp);
-                    }
+                    double nextWeights = compareWeights.compare(subscriptInstances, cursor, index - 1, codeTemp);
+                    //添加该下标可打的所有词为上一跳权重
+                    subscriptInstances[cursor].addPre(nextWeights, index, strTemp, codeTemp, typeConvert.convert(codeTemp));
                 }
             }
-            /*
-              （判断该下标的最短编码长度有无设置
-
-              无->分支1：若无设置，即前面遍历都没有遇到词，下标j处为单字，将该下标设置为上一跳最短编码长度+该下标单字编码长度）
-
-              有->分支2：[说明该处必为某词的最后一字]（该下标最短编码长度）是否大于（上一跳最短编码长度+该字符编码长度）
-                    是->说明上一跳的词不为最短编码，将上一跳删除，并将该处最短编码设置为后者。
-             */
-            int wordCodeLength = subscriptInstances[index].getWordCode().length();
-            int thisCodeLength = subscriptInstances[index].getCodeLengthTemp();
-            int nextCodeLengthTemp = preCodeLengthTemp + wordCodeLength;
-            if (thisCodeLength == 0) {
-                subscriptInstances[index].setCodeLengthTemp(nextCodeLengthTemp);
-            } else if (thisCodeLength > nextCodeLengthTemp) {
-                subscriptInstances[index].setCodeLengthTemp(nextCodeLengthTemp);
-            }
+            compareWeights.compare(subscriptInstances, index, index - 1, subscriptInstances[index].getWordCode());
         }
     }
 
     /**
      * 逆向进行dp计算最短编码。
      */
-    public void reverseDp(SubscriptInstance[] subscriptInstances) {
+    private void reverseDp(SubscriptInstance[] subscriptInstances) {
         /*
           结束了所有增加上一跳操作后，从后往前跳（因为最后一格为最短编码，一直往上一跳绝对为最短路径）
 
@@ -186,7 +168,7 @@ public class TrieWordParser {
                 }
             }
             //错过最短编码后的动态词提
-            for (Integer key : subscriptInstance.getPreInfoMap().keySet()) {
+            for (Double key : subscriptInstance.getPreInfoMap().keySet()) {
                 TreeMap<Integer, PreInfo> preInfoTreeMap = subscriptInstances[i].getPreInfoMap().get(key);
                 for (Map.Entry<Integer, PreInfo> entry : preInfoTreeMap.entrySet()) {
                     int preTemp = entry.getKey();

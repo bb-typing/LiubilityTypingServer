@@ -25,8 +25,11 @@ public class SubscriptInstance {
 
     private int next;//下一跳
 
+    /**
+     * <权重值(编码长度等),<上一跳下标,上一跳信息>>
+     */
     @JsonIgnore
-    private Map<Integer, TreeMap<Integer, PreInfo>> preInfoMap;//上一跳
+    private TreeMap<Double, TreeMap<Integer, PreInfo>> preInfoMap;//上一跳
 
     @JsonIgnore
     private boolean useSign;
@@ -36,6 +39,16 @@ public class SubscriptInstance {
 
     @JsonIgnore
     private int codeLengthTemp;
+
+    /**
+     * 左右击键差值
+     */
+    @JsonIgnore
+    private int feelDeviation;
+
+
+    @JsonIgnore
+    private double weights;
 
     @Data
     public static class PreInfo {
@@ -54,7 +67,11 @@ public class SubscriptInstance {
     }
 
     public PreInfo getMinPre() {
-        TreeMap<Integer, PreInfo> preInfoTreeMap = preInfoMap.get(codeLengthTemp);
+        Map.Entry<Double, TreeMap<Integer, PreInfo>> entry = preInfoMap.firstEntry();
+        if (entry == null) {
+            return null;
+        }
+        TreeMap<Integer, PreInfo> preInfoTreeMap = entry.getValue();
         if (preInfoTreeMap == null || preInfoTreeMap.firstEntry() == null) {
             return null;
         }
@@ -63,12 +80,14 @@ public class SubscriptInstance {
 
     public SubscriptInstance(int i) {
         next = i;
-        preInfoMap = new HashMap<>();
+        preInfoMap = new TreeMap<>();
         wordCode = "";
         word = "";
         useSign = false;
         useWordSign = false;
         codeLengthTemp = 0;
+        feelDeviation = 0;
+        weights = 0;
         type = "0";
     }
 
@@ -80,7 +99,7 @@ public class SubscriptInstance {
         this.wordsCode = wordCode;
     }
 
-    public void addPre(int length, int pre, String words, String wordsCode, String type) {
+    public void addPre(double length, int pre, String words, String wordsCode, String type) {
         TreeMap<Integer, PreInfo> map = preInfoMap.get(length);
         if (map == null) {
             map = new TreeMap<>();

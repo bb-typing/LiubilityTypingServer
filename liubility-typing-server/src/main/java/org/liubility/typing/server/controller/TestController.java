@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import org.liubility.commons.http.response.normal.Result;
+import org.liubility.typing.server.code.compare.CompareCodeLengthWeights;
+import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
@@ -28,11 +30,16 @@ public class TestController {
 
     private final TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
 
+
+    CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights();
+
     {
         wordLib.merge(symbol);
+        compareFeelDeviationWeights.addKeyBoardPartition("qwertasdfgzxcv_");
+        compareFeelDeviationWeights.addKeyBoardPartition("yuiophjkl;'bnm,./");
     }
 
-    private final TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()));
+    private final TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
 
     @PostMapping(value = "/typingTips")
     @ApiOperation("词提测试")
