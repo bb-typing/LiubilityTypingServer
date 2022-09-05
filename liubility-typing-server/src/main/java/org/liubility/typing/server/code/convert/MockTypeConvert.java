@@ -14,7 +14,7 @@ public class MockTypeConvert extends WordTypeConvert {
     @Override
     public String convert(String code) {
         int length = code.length();
-        String substring = code.substring(length - 2, length - 1);
+        String substring = code.substring(length - 1, length);
         int i = getFilterDuplicateSymbols().indexOf(substring);
         if (getDefaultUpSymbol().equals(substring)) {
             length -= 1;

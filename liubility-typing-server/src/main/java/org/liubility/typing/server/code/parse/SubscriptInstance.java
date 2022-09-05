@@ -69,12 +69,15 @@ public class SubscriptInstance {
         useSign = false;
         useWordSign = false;
         codeLengthTemp = 0;
+        type = "0";
     }
 
     public SubscriptInstance(int i, String word, String wordCode) {
         this(i);
         this.wordCode = wordCode;
         this.word = word;
+        this.words = word;
+        this.wordsCode = wordCode;
     }
 
     public void addPre(int length, int pre, String words, String wordsCode, String type) {

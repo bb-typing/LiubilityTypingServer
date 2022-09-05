@@ -98,7 +98,6 @@ public class TrieWordParser {
 
             subscriptInstances[index] = subscriptInstance;
         }
-//        subscriptInstances[0].setCodeLengthTemp(subscriptInstances[0].getWordCode().length());
         return subscriptInstances;
     }
 
@@ -140,7 +139,6 @@ public class TrieWordParser {
               有->分支2：[说明该处必为某词的最后一字]（该下标最短编码长度）是否大于（上一跳最短编码长度+该字符编码长度）
                     是->说明上一跳的词不为最短编码，将上一跳删除，并将该处最短编码设置为后者。
              */
-//            if (index > 0) {
             int wordCodeLength = subscriptInstances[index].getWordCode().length();
             int thisCodeLength = subscriptInstances[index].getCodeLengthTemp();
             int nextCodeLengthTemp = preCodeLengthTemp + wordCodeLength;
@@ -149,7 +147,6 @@ public class TrieWordParser {
             } else if (thisCodeLength > nextCodeLengthTemp) {
                 subscriptInstances[index].setCodeLengthTemp(nextCodeLengthTemp);
             }
-//            }
         }
     }
 

@@ -45,7 +45,7 @@ public class TrieWordLib extends WordLib {
             }
             node.setCode(code);
         } else if (node.getCode() == null ||
-                node.getCode().replaceAll(getDefaultUpSymbol(), "").length() > code.length()) {
+                node.getCode().replaceAll(getDefaultUpSymbol(), "").length() > code.replaceAll(getDefaultUpSymbol(), "").length()) {
             node.setCode(code);
         }
     }
