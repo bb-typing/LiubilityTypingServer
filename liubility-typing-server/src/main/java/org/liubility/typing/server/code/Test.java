@@ -1,6 +1,5 @@
 package org.liubility.typing.server.code;
 
-import org.liubility.typing.server.code.compare.CompareCodeLengthWeights;
 import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
@@ -32,7 +31,7 @@ public class Test {
         TrieWordLib wordLib = new TrieWordLib("wordlib.txt", "23456789", 4, ";'");
         TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
         wordLib.merge(symbol);
-        CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights();
+        CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(0.5, 0.5, wordLib.getFilterDuplicateSymbols());
         compareFeelDeviationWeights.addKeyBoardPartition("1qaz");
         compareFeelDeviationWeights.addKeyBoardPartition("2wsx");
         compareFeelDeviationWeights.addKeyBoardPartition("3edc");

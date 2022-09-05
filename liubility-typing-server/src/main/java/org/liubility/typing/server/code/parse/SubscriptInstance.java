@@ -44,7 +44,7 @@ public class SubscriptInstance {
      * 左右击键差值
      */
     @JsonIgnore
-    private int feelDeviation;
+    private double feelDeviation;
 
 
     @JsonIgnore

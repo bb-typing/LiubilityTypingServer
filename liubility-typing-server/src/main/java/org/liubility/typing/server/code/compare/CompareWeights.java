@@ -8,5 +8,14 @@ import org.liubility.typing.server.code.parse.SubscriptInstance;
  * @Description:
  */
 public abstract class CompareWeights {
-    public abstract double compare(SubscriptInstance[] subscriptInstances, Integer index, Integer preIndex, String code);
+    /**
+     *
+     * @param subscriptInstances 文章
+     * @param index 当前下标
+     * @param preIndex  上一跳下标
+     * @param word  计算词组
+     * @param code  计算词组编码
+     * @return  权重值
+     */
+    public abstract double compare(SubscriptInstance[] subscriptInstances, Integer index, Integer preIndex, String word, String code);
 }

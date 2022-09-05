@@ -123,12 +123,12 @@ public class TrieWordParser {
                 node = node.getChildren().get(currentWord);
                 if (node != null && node.getCode() != null) {
                     codeTemp = deleteDefaultUpSymbol(node.getCode(), subscriptInstances, cursor);
-                    double nextWeights = compareWeights.compare(subscriptInstances, cursor, index - 1, codeTemp);
+                    double nextWeights = compareWeights.compare(subscriptInstances, cursor, index - 1, strTemp, codeTemp);
                     //添加该下标可打的所有词为上一跳权重
                     subscriptInstances[cursor].addPre(nextWeights, index, strTemp, codeTemp, typeConvert.convert(codeTemp));
                 }
             }
-            compareWeights.compare(subscriptInstances, index, index - 1, subscriptInstances[index].getWordCode());
+            compareWeights.compare(subscriptInstances, index, index - 1, subscriptInstances[index].getWord(), subscriptInstances[index].getWordCode());
         }
     }
 

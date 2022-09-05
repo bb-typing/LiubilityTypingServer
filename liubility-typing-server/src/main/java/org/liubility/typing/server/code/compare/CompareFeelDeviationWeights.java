@@ -14,21 +14,33 @@ import java.util.stream.Collectors;
  */
 public class CompareFeelDeviationWeights extends CompareWeights {
 
+    private final Double duplicateSymbolWeights;
+
+    private final Double wordLengthWeights;
+
     private final List<String> keyBoardPartitions = new ArrayList<>();
+
+    protected final List<String> filterDuplicateSymbols;
+
+    public CompareFeelDeviationWeights(Double duplicateSymbolWeights, Double wordLengthWeights, List<String> filterDuplicateSymbols) {
+        this.duplicateSymbolWeights = duplicateSymbolWeights;
+        this.wordLengthWeights = wordLengthWeights;
+        this.filterDuplicateSymbols = filterDuplicateSymbols;
+    }
 
     public void addKeyBoardPartition(String keyBoardPartition) {
         keyBoardPartitions.add(keyBoardPartition);
     }
 
     @Override
-    public double compare(SubscriptInstance[] subscriptInstances, Integer index, Integer preIndex, String code) {
+    public double compare(SubscriptInstance[] subscriptInstances, Integer index, Integer preIndex, String word, String code) {
         SubscriptInstance subscriptInstance = subscriptInstances[index];
         //this
         double thisWeights = subscriptInstance.getWeights();
 
         //pre
         int preCodeLength = 0;
-        int preFeelDeviation = 0;
+        double preFeelDeviation = 0;
         String preWordsCode = "";
         //上一跳的权重值
         double preWeights = 0;
@@ -46,7 +58,7 @@ public class CompareFeelDeviationWeights extends CompareWeights {
         if (StringUtils.isNoneBlank(preWordsCode)) {
             feelDeviationCode = preWordsCode.substring(preWordsCode.length() - 1) + feelDeviationCode;
         }
-        int wordFeelDeviation = 0;
+        double wordFeelDeviation = 0;
         int feelType = -1;
         List<String> feelDeviationCodeChars = feelDeviationCode.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
         for (String feelDeviationCodeChar : feelDeviationCodeChars) {
@@ -61,10 +73,19 @@ public class CompareFeelDeviationWeights extends CompareWeights {
                 }
             }
         }
-        double wordsWeights = wordFeelDeviation * 1.0;
+
+        double wordsWeights = wordFeelDeviation;
+
+        //选重涨权
+        String duplicateSymbol = code.substring(wordsCodeLength);
+        int duplicateNum = filterDuplicateSymbols.indexOf(duplicateSymbol) + 1;
+        wordsWeights += wordsCodeLength - duplicateSymbolWeights * duplicateNum;
+
+        //组词降权
+        wordsWeights -= (word.length() - 1) * wordLengthWeights;
 
         //next
-        int nextFeelDeviation = preFeelDeviation + wordFeelDeviation;
+        double nextFeelDeviation = preFeelDeviation + wordFeelDeviation;
         int nextCodeLength = preCodeLength + wordsCodeLength;
         double nextWeights = preWeights + wordsWeights;
         /*

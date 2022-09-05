@@ -13,7 +13,7 @@ public class CompareCodeLengthWeights extends CompareWeights {
      * 计算权重，是否替换当前下标的权重值
      */
     @Override
-    public double compare(SubscriptInstance[] subscriptInstances, Integer index, Integer preIndex, String code) {
+    public double compare(SubscriptInstance[] subscriptInstances, Integer index, Integer preIndex, String word, String code) {
         SubscriptInstance subscriptInstance = subscriptInstances[index];
 
         double thisWeights = subscriptInstance.getWeights();

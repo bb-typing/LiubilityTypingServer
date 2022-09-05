@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import org.liubility.commons.http.response.normal.Result;
-import org.liubility.typing.server.code.compare.CompareCodeLengthWeights;
 import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
@@ -31,7 +30,7 @@ public class TestController {
     private final TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
 
 
-    CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights();
+    CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(0.5, 0.5, wordLib.getFilterDuplicateSymbols());
 
     {
         wordLib.merge(symbol);
