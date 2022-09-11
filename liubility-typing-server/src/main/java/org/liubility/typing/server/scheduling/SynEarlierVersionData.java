@@ -120,6 +120,7 @@ public class SynEarlierVersionData extends ToggleScheduler {
             log.info("创建源数据库连接成功");
             return connection;
         } catch (ClassNotFoundException | SQLException e) {
+            log.error("获取连接失败", e);
             return null;
         }
     }
