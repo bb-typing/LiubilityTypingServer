@@ -61,6 +61,13 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .in(ParameterType.HEADER)
                 .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING)))
                 .build());
+        parameters.add(new RequestParameterBuilder()
+                .name("userId")
+                .description("用户id")
+                .required(false)
+                .in(ParameterType.HEADER)
+                .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING)))
+                .build());
         return parameters;
     }
 

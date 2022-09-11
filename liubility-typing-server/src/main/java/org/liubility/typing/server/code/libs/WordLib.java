@@ -57,6 +57,12 @@ public class WordLib {
 
     private final ReaderFactory readerFactory;
 
+    @Getter
+    private int wordCount = 0;
+
+    @Getter
+    private int maxWordLength = 0;
+
     public WordLib(ReaderFactory readerFactory, String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
         this.readerFactory = readerFactory;
         this.wordLibFilePath = wordLibFilePath;
@@ -86,26 +92,35 @@ public class WordLib {
                 String word = spliced[0];
                 String code = spliced[1];
                 code = checkDuplicate(code);
-                dictPut(word, code);
+                boolean add = dictPut(word, code);
+                if (add && maxWordLength < word.length()) {
+                    maxWordLength = word.length();
+                }
             }
         } catch (Exception e) {
             log.error("读取词库文件失败", e);
         }
     }
 
-    public void dictPutAll(Map<String, String> dict) {
+    public int dictPutAll(Map<String, String> dict) {
+        int addCount = 0;
         for (Map.Entry<String, String> entry : dict.entrySet()) {
-            dictPut(entry.getKey(), entry.getValue());
+            if (dictPut(entry.getKey(), entry.getValue())) {
+                addCount++;
+            }
         }
+        wordCount += addCount;
+        return addCount;
     }
 
-    public void dictPut(String word, String code) {
+    public boolean dictPut(String word, String code) {
         //计算编码选重符号
         Map<String, String> wordCodeDict = getWordCodeDictMap().computeIfAbsent(word.length(), (e) -> new HashMap<>());
         String codeFromDict = wordCodeDict.get(word);
         if (codeFromDict == null || codeFromDict.replaceAll(getDefaultUpSymbol(), "").length() > code.length()) {
             wordCodeDict.put(word, code);
         }
+        return codeFromDict == null;
     }
 
     /**

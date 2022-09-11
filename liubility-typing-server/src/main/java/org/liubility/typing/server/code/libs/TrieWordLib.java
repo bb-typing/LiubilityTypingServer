@@ -31,9 +31,9 @@ public class TrieWordLib extends WordLib {
     }
 
     @Override
-    public void dictPut(String word, String code) {
+    public boolean dictPut(String word, String code) {
         List<String> wordChars = word.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
-        if (wordChars.size() == 0) return;
+        if (wordChars.size() == 0) return true;
         TrieNode node = getNode(word);
         if (node == null) {
             node = root;
@@ -45,10 +45,14 @@ public class TrieWordLib extends WordLib {
                 node = children.computeIfAbsent(wordChar, (e) -> new TrieNode());
             }
             node.setCode(code);
-        } else if (node.getCode() == null ||
-                node.getCode().replaceAll(getDefaultUpSymbol(), "").length() > code.replaceAll(getDefaultUpSymbol(), "").length()) {
+            return true;
+        } else if (node.getCode() == null) {
+            node.setCode(code);
+            return true;
+        } else if (node.getCode().replaceAll(getDefaultUpSymbol(), "").length() > code.replaceAll(getDefaultUpSymbol(), "").length()) {
             node.setCode(code);
         }
+        return false;
     }
 
     @Override

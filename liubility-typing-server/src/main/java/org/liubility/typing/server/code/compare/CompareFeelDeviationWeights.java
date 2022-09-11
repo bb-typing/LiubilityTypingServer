@@ -32,6 +32,10 @@ public class CompareFeelDeviationWeights extends CompareWeights {
         keyBoardPartitions.add(keyBoardPartition);
     }
 
+    public void addKeyAllBoardPartition(List<String> keyBoardPartitionList) {
+        keyBoardPartitions.addAll(keyBoardPartitionList);
+    }
+
     @Override
     public double compare(SubscriptInstance[] subscriptInstances, Integer index, Integer preIndex, String word, String code) {
         SubscriptInstance subscriptInstance = subscriptInstances[index];

@@ -69,4 +69,8 @@ public class MinioServiceImpl {
         }
         return objectName;
     }
+
+    public void delete(String bucketName, String objectName) {
+        minio.removeObjects(bucketName, objectName);
+    }
 }
