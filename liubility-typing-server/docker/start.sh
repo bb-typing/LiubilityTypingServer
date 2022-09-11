@@ -22,4 +22,4 @@ docker run --rm -it -d --tty -p ${SERVER_PORT}:${SERVER_PORT} \
   -e CL_DB_PORT=${CL_DB_PORT} \
   -e CL_DB_USER=${CL_DB_USER} \
   -e CL_DB_PSW=${CL_DB_PSW} \
-  --name ${DOCKER_CONTAINER} ${DOCKER_IMG}"
+  --name ${DOCKER_CONTAINER} ${DOCKER_IMG}
