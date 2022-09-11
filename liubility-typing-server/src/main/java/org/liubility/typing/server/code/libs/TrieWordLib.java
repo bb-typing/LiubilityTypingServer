@@ -20,6 +20,10 @@ public class TrieWordLib extends WordLib {
 
     private TrieNode root;
 
+    public TrieWordLib(ReaderFactory readerFactory, String wordLibFilePath){
+        super(readerFactory,wordLibFilePath,"",0,"");
+    }
+
     public TrieWordLib(ReaderFactory readerFactory, String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
         super(readerFactory, wordLibFilePath, filterDuplicateSymbols, codeMaxLength, leader);
     }

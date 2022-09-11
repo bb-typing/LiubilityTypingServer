@@ -3,6 +3,7 @@ package org.liubility.typing.server.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.typing.server.domain.entity.Article;
+import org.liubility.typing.server.exception.ArticleCode;
 import org.liubility.typing.server.mappers.ArticleMapper;
 import org.liubility.typing.server.service.ArticleService;
 import org.liubility.commons.exception.LBRuntimeException;
@@ -27,8 +28,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public Article getArticleById(Long articleId) {
         Article article = getArticle(new Article(articleId));
-        if(article == null){
-            throw new LBRuntimeException("没有该文章");
+        if (article == null) {
+            throw new LBRuntimeException(ArticleCode.NOT_EXIST_ARTICLE);
         }
         return article;
     }

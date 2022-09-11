@@ -44,4 +44,6 @@ public class WordLibInfo extends Model<WordLibInfo> {
     private Double wordLengthWeight;
 
     private String leaderSymbols;
+
+    private Integer priority;
 }

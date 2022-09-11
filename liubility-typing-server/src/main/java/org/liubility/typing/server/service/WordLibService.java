@@ -1,9 +1,10 @@
 package org.liubility.typing.server.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.liubility.typing.server.code.parse.TrieWordParser;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
-import org.springframework.web.multipart.MultipartFile;
+import org.liubility.typing.server.domain.vo.TypingTips;
 
 /**
  * @Author: JDragon
@@ -11,5 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @Description:
  */
 public interface WordLibService extends IService<WordLibInfo> {
-    void uploadWordLib(Long userId, WordLibDTO wordLibDTO);
+    TrieWordParser uploadWordLib(Long userId, WordLibDTO wordLibDTO);
+
+    TrieWordParser loadWordLib(Long userId);
+
+    TypingTips typingTips(Long userId, String article);
 }

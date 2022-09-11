@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.domain.entity.TypingHistory;
+import org.liubility.typing.server.exception.HistoryCode;
 import org.liubility.typing.server.mappers.TypingHistoryMapper;
 import org.liubility.typing.server.mapstruct.ArticleMapStruct;
 import org.liubility.typing.server.mapstruct.TypeHistoryMapStruct;
@@ -49,7 +50,7 @@ public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, T
         Article article = articleMapStruct.toEntity(historyArticleDto.getArticleDto());
 
         if (typingHistory.getTime() < 0) {
-            throw new LBRuntimeException("成绩出现异常");
+            throw new LBRuntimeException(HistoryCode.ABNORMAL_GRADES);
         }
 
         Article oldArticle = articleService.getArticle(article);
@@ -57,7 +58,7 @@ public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, T
             if (article.insert()) {
                 oldArticle = article;
             } else {
-                throw new LBRuntimeException("保存文档失败");
+                throw new LBRuntimeException(HistoryCode.SAVE_ARTICLE_FAIL);
             }
         }
 
@@ -69,7 +70,7 @@ public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, T
         if (typingHistory.insert()) {
             return "上传成功";
         } else {
-            throw new LBRuntimeException("上传失败");
+            throw new UnknownError("上传失败");
         }
     }
 }

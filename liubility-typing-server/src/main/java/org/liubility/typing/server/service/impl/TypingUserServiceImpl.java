@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.commons.dto.account.NumDto;
 import org.liubility.commons.util.GenerateUtils;
 import org.liubility.typing.server.domain.entity.TypingUser;
+import org.liubility.typing.server.exception.UserTypingCode;
 import org.liubility.typing.server.mappers.TypingUserMapper;
 import org.liubility.typing.server.mapstruct.TypeUserMapStruct;
 import org.liubility.typing.server.service.TypingUserService;
@@ -35,7 +36,7 @@ public class TypingUserServiceImpl extends ServiceImpl<TypingUserMapper, TypingU
         lambdaQueryWrapper.eq(TypingUser::getId, userId);
         TypingUser typingUser = this.getOne(lambdaQueryWrapper);
         if (typingUser == null) {
-            throw new LBRuntimeException("你还未申请跟打器账号");
+            throw new LBRuntimeException(UserTypingCode.NOT_EXIST);
         }
         return typingUser;
     }
@@ -44,7 +45,7 @@ public class TypingUserServiceImpl extends ServiceImpl<TypingUserMapper, TypingU
     public NumDto changeNum(Long userId, NumDto numDto) {
         String md5 = GenerateUtils.generateNumKey(numDto, secret);
         if (!md5.equals(numDto.getNumKey())) {
-            throw new LBRuntimeException("密钥错误");
+            throw new LBRuntimeException(UserTypingCode.SECRET_ERROR);
         }
         TypingUser typingUser = getTypeUserById(userId);
         typingUser.incrNum(numDto);

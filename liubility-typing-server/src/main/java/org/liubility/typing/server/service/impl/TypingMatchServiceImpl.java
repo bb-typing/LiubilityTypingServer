@@ -15,6 +15,8 @@ import org.liubility.typing.server.domain.entity.TypingHistory;
 import org.liubility.typing.server.domain.entity.TypingMatch;
 import org.liubility.typing.server.domain.vo.TypingHistoryVO;
 import org.liubility.typing.server.domain.vo.TypingMatchVO;
+import org.liubility.typing.server.exception.HistoryCode;
+import org.liubility.typing.server.exception.TypingMatchCode;
 import org.liubility.typing.server.mappers.ArticleMapper;
 import org.liubility.typing.server.mappers.TypingHistoryMapper;
 import org.liubility.typing.server.mappers.TypingMatchMapper;
@@ -51,7 +53,7 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
     public TypingMatchVO getTodayMatch(Long userId, Boolean mobile) throws LBException {
         TypingHistory typingMatchHistory = typingHistoryMapper.getTypingMatchHistory(userId, mobile, DateUtil.today());
         if (typingMatchHistory != null) {
-            throw new LBException("你今日已获取过赛文");
+            throw new LBException(TypingMatchCode.GET_AGAIN);
         }
 
         insertTodayMatch();
@@ -97,16 +99,17 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
                 openTljMatchUserList.remove(userId);
                 return "上传成功";
             } else {
-                throw new LBRuntimeException("上传失败");
+                throw new LBRuntimeException(TypingMatchCode.UPLOAD_FAIL);
             }
         } else {
-            throw new LBRuntimeException("赛文已过期");
+            throw new LBRuntimeException(TypingMatchCode.EXPIRED);
         }
     }
 
     @Override
     public PageTable<TypingHistoryVO> getMatchAch(Date date, Integer matchType, Boolean mobile) {
         List<TypingHistoryVO> typingMatchHistoryWithName = typingHistoryMapper.getTypingMatchHistoryWithName(date, matchType, mobile);
-        return TableFactory.buildPageTable(new TableRef<TypingHistoryVO>(typingMatchHistoryWithName){});
+        return TableFactory.buildPageTable(new TableRef<TypingHistoryVO>(typingMatchHistoryWithName) {
+        });
     }
 }

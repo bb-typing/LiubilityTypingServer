@@ -7,10 +7,12 @@ import org.liubility.commons.dto.account.AccountDto;
 import org.liubility.commons.exception.AuthException;
 import org.liubility.commons.exception.LBRuntimeException;
 import org.liubility.commons.jwt.JwtServiceImpl;
+import org.liubility.typing.server.exception.AccountCode;
 import org.liubility.typing.server.mappers.AccountMapper;
 import org.liubility.typing.server.domain.entity.Account;
 import org.liubility.typing.server.mapstruct.AccountMapStruct;
 import org.liubility.typing.server.service.AccountService;
+import org.liubility.typing.server.service.WordLibService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +49,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if (!loginAccountByName.getPassword().equals(password)) {
             throw new AuthException("密码错误");
         }
+
         return jwtService.generateToken(loginAccountByName);
     }
 
@@ -56,7 +59,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         String password = SecureUtil.md5(accountDto.getPassword());
         AccountDto existAccount = getAccountByName(username);
         if (existAccount != null) {
-            throw new LBRuntimeException("该用户名已存在");
+            throw new LBRuntimeException(AccountCode.USER_EXIST);
         }
         Account account = accountMapStruct.dtoToAccount(accountDto);
         account.setPassword(password);
