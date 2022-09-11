@@ -25,8 +25,8 @@ import java.io.Serializable;
 @TableName("base_account")
 public class Account extends Model<Account> {
 
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     private String username;
 

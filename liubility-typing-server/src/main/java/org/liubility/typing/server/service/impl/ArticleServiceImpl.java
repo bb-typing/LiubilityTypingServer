@@ -25,7 +25,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Article getArticleById(Integer articleId) {
+    public Article getArticleById(Long articleId) {
         Article article = getArticle(new Article(articleId));
         if(article == null){
             throw new LBRuntimeException("没有该文章");

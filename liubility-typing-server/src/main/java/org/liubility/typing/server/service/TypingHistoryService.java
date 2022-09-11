@@ -14,7 +14,7 @@ import org.liubility.commons.exception.LBRuntimeException;
  * @Des:
  */
 public interface TypingHistoryService extends IService<TypingHistory> {
-    IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> historyIPage, Integer userId);
+    IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> historyIPage, Long userId);
 
     String uploadHistoryAndArticle(HistoryArticleDto historyArticleDto) throws LBRuntimeException;
 }

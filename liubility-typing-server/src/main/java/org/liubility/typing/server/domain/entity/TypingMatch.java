@@ -21,17 +21,17 @@ import java.util.Date;
 public class TypingMatch extends Model<TypingMatch> {
 
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     private Date holdDate;
 
-    private Integer articleId;
+    private Long articleId;
 
     private String author;
 
     private Integer matchType;
 
-    public TypingMatch(Integer articleId, Date holdDate, String author,Integer matchType){
+    public TypingMatch(Long articleId, Date holdDate, String author,Integer matchType){
         this.articleId = articleId;
         this.holdDate = holdDate;
         this.author = author;

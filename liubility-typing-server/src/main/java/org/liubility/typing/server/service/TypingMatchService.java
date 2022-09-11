@@ -1,8 +1,10 @@
 package org.liubility.typing.server.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.liubility.commons.exception.LBException;
 import org.liubility.commons.http.response.table.PageTable;
 import org.liubility.typing.server.domain.entity.TypingHistory;
+import org.liubility.typing.server.domain.entity.TypingMatch;
 import org.liubility.typing.server.domain.vo.TypingHistoryVO;
 import org.liubility.typing.server.domain.vo.TypingMatchVO;
 
@@ -14,10 +16,10 @@ import java.util.Date;
  * @Email 1061917196@qq.com
  * @Des:
  */
-public interface TypingMatchService {
-    TypingMatchVO getTodayMatch(Integer userId, Boolean mobile) throws LBException;
+public interface TypingMatchService extends IService<TypingMatch> {
+    TypingMatchVO getTodayMatch(Long userId, Boolean mobile) throws LBException;
 
-    String uploadMatch(Integer userId, TypingHistory typingHistory);
+    String uploadMatch(Long userId, TypingHistory typingHistory);
 
     PageTable<TypingHistoryVO> getMatchAch(Date date, Integer matchType, Boolean mobile);
 }

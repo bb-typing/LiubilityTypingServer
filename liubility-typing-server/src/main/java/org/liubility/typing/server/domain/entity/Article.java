@@ -23,14 +23,14 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Article extends Model<Article> {
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     private String title;
 
     private String content;
 
-    public Article(int id) {
+    public Article(Long id) {
         this.id = id;
     }
 

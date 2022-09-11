@@ -2,6 +2,7 @@ package org.liubility.typing.server.code.libs;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.liubility.typing.server.code.reader.ReaderFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +20,8 @@ public class TrieWordLib extends WordLib {
 
     private TrieNode root;
 
-    public TrieWordLib(String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
-        super(wordLibFilePath, filterDuplicateSymbols, codeMaxLength, leader);
+    public TrieWordLib(ReaderFactory readerFactory, String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
+        super(readerFactory, wordLibFilePath, filterDuplicateSymbols, codeMaxLength, leader);
     }
 
     @Override

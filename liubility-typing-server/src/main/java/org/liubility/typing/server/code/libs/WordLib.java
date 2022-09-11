@@ -1,11 +1,10 @@
 package org.liubility.typing.server.code.libs;
 
-import cn.hutool.core.io.resource.ResourceUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.liubility.typing.server.code.reader.ReaderFactory;
 
 import java.io.BufferedReader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,10 @@ public class WordLib {
 
     protected final Map<String, Integer> codeWordDict = new HashMap<>();
 
-    public WordLib(String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
+    private final ReaderFactory readerFactory;
+
+    public WordLib(ReaderFactory readerFactory, String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
+        this.readerFactory = readerFactory;
         this.wordLibFilePath = wordLibFilePath;
         this.codeMaxLength = codeMaxLength;
         this.leader = leader.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
@@ -69,7 +71,7 @@ public class WordLib {
      * 提供按照词库重复编码的顺序来计算选重符号
      */
     public void init() {
-        try (BufferedReader reader = getWordLibReader()) {
+        try (BufferedReader reader = readerFactory.getReader(getWordLibFilePath())) {
             String temp;
             while ((temp = reader.readLine()) != null) {
                 if (temp.startsWith("---")) continue;
@@ -169,10 +171,4 @@ public class WordLib {
     public int getNoMaxLengthSign() {
         return 0;
     }
-
-    public BufferedReader getWordLibReader() {
-        return ResourceUtil.getReader(getWordLibFilePath(), StandardCharsets.UTF_8);
-//        return FileUtil.getReader(getWordLibFilePath(), StandardCharsets.UTF_8);
-    }
-
 }

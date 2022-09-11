@@ -30,7 +30,7 @@ public class TypingUserServiceImpl extends ServiceImpl<TypingUserMapper, TypingU
     private TypeUserMapStruct typeUserMapStruct;
 
     @Override
-    public TypingUser getTypeUserById(Integer userId) {
+    public TypingUser getTypeUserById(Long userId) {
         LambdaQueryWrapper<TypingUser> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(TypingUser::getId, userId);
         TypingUser typingUser = this.getOne(lambdaQueryWrapper);
@@ -41,7 +41,7 @@ public class TypingUserServiceImpl extends ServiceImpl<TypingUserMapper, TypingU
     }
 
     @Override
-    public NumDto changeNum(Integer userId, NumDto numDto) {
+    public NumDto changeNum(Long userId, NumDto numDto) {
         String md5 = GenerateUtils.generateNumKey(numDto, secret);
         if (!md5.equals(numDto.getNumKey())) {
             throw new LBRuntimeException("密钥错误");

@@ -4,16 +4,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import org.liubility.commons.http.response.normal.Result;
-import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
-import org.liubility.typing.server.code.convert.MockTypeConvert;
-import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
-import org.liubility.typing.server.code.parse.TrieWordParser;
 import org.liubility.typing.server.compare.ArticleComparator;
 import org.liubility.typing.server.compare.ComparisonItem;
+import org.liubility.typing.server.minio.service.MinioServiceImpl;
+import org.liubility.typing.server.scheduling.SynEarlierVersionData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.liubility.typing.server.code.Test.symbol;
+import static org.liubility.typing.server.code.Test.trieWordParser;
 
 /**
  * @Author: JDragon
@@ -25,27 +28,13 @@ import java.util.List;
 @Api(tags = "测试")
 public class TestController {
 
-    private final TrieWordLib wordLib = new TrieWordLib("wordlib.txt", "23456789", 4, ";'");
 
-    private final TrieWordLib symbol = new TrieWordLib("symbol.txt", "", 0, "");
+    private final MinioServiceImpl minioService;
 
-
-    CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(0.5, 0.5, wordLib.getFilterDuplicateSymbols());
-
-    {
-        wordLib.merge(symbol);
-        compareFeelDeviationWeights.addKeyBoardPartition("1qaz");
-        compareFeelDeviationWeights.addKeyBoardPartition("2wsx");
-        compareFeelDeviationWeights.addKeyBoardPartition("3edc");
-        compareFeelDeviationWeights.addKeyBoardPartition("45rfvtgb");
-        compareFeelDeviationWeights.addKeyBoardPartition("67yhnujm");
-        compareFeelDeviationWeights.addKeyBoardPartition("8ik,");
-        compareFeelDeviationWeights.addKeyBoardPartition("9ol.");
-        compareFeelDeviationWeights.addKeyBoardPartition("0p;/'");
-        compareFeelDeviationWeights.addKeyBoardPartition("_");
+    public TestController(MinioServiceImpl minioService, RedisTemplate<String, Object> redisTemplate) {
+        this.minioService = minioService;
+        this.redisTemplate = redisTemplate;
     }
-
-    private final TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
 
     @PostMapping(value = "/typingTips")
     @ApiOperation("词提测试")
@@ -68,6 +57,27 @@ public class TestController {
         ArticleComparator articleComparator = new ArticleComparator();
         List<ComparisonItem> comparisonItemList = articleComparator.comparison(codeParam.getOrigin(), codeParam.getTyped(), codeParam.isIgnoreSymbols(), symbol);
         return Result.success(comparisonItemList);
+    }
+
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    @PostMapping(value = "/redis")
+    @ApiOperation("设置redis值")
+    public Result<String> uploadWordLib(@RequestParam String key,
+                                        @RequestParam Long value) {
+        redisTemplate.opsForValue().set(key, value);
+        return Result.success("设置成功");
+    }
+
+
+    @Autowired
+    private SynEarlierVersionData synEarlierVersionData;
+
+    @PostMapping(value = "/synData")
+    @ApiOperation("数据同步")
+    public Result<String> synData() {
+        synEarlierVersionData.start();
+        return Result.success("启动成功");
     }
 
     @Data

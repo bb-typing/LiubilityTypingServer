@@ -38,7 +38,7 @@ import java.util.List;
 @Service
 public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, TypingMatch> implements TypingMatchService {
 
-    private static TimingMap<Integer, Integer> openTljMatchUserList = new TimingMap<>();
+    private static final TimingMap<Long, Long> openTljMatchUserList = new TimingMap<>();
 
     @Autowired
     private TypingHistoryMapper typingHistoryMapper;
@@ -48,7 +48,7 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
 
 
     @Override
-    public TypingMatchVO getTodayMatch(Integer userId, Boolean mobile) throws LBException {
+    public TypingMatchVO getTodayMatch(Long userId, Boolean mobile) throws LBException {
         TypingHistory typingMatchHistory = typingHistoryMapper.getTypingMatchHistory(userId, mobile, DateUtil.today());
         if (typingMatchHistory != null) {
             throw new LBException("你今日已获取过赛文");
@@ -87,7 +87,7 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
     }
 
     @Override
-    public String uploadMatch(Integer userId, TypingHistory typingHistory) {
+    public String uploadMatch(Long userId, TypingHistory typingHistory) {
         if (openTljMatchUserList.containsKey(userId)) {
             TypingMatchVO todayMatch = baseMapper.getTodayMatch(DateUtil.today());
             typingHistory.setId(openTljMatchUserList.get(userId));

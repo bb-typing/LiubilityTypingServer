@@ -23,12 +23,12 @@ import java.util.Date;
 @TableName("typing_history")
 public class TypingHistory extends Model<TypingHistory> {
 
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
-    private Integer userId;
+    private Long userId;
 
-    private Integer articleId;
+    private Long articleId;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date typeDate;

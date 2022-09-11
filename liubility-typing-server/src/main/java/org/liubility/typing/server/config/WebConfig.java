@@ -1,6 +1,8 @@
 package org.liubility.typing.server.config;
 
 import org.liubility.commons.interceptor.ContextHolderInterceptor;
+import org.liubility.typing.server.minio.Minio;
+import org.liubility.typing.server.minio.MinioProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,11 +24,22 @@ public class WebConfig implements WebMvcConfigurer {
     public ContextHolderInterceptor contextHolderInterceptor() {
         return new ContextHolderInterceptor();
     }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addWebRequestInterceptor(contextHolderInterceptor());
     }
 
+    @Bean
+    public Minio minio(MinioProperties minioProperties) {
+        Minio minio = Minio.builder()
+                .endpoint("http://" + minioProperties.getHost() + ":" + minioProperties.getPort())
+                .accessKey(minioProperties.getAccessKey())
+                .secretKey(minioProperties.getSecretKey())
+                .build();
+        minio.init();
+        return minio;
+    }
 //    @Bean
 //    public CorsFilter corsFilter() {
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

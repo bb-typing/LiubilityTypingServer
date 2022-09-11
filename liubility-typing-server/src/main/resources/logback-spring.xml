@@ -76,7 +76,7 @@ debug：当此属性设置为true时，将打印出logback内部日志信息，�
     <!-- hibernate logger -->
     <logger name="org.liubility.typing.server" level="trace" />
     <!-- Spring framework logger -->
-    <logger name="org.springframework" level="debug" additivity="true"/>
+    <logger name="org.springframework" level="INFO" additivity="true"/>
     <!--additivity改为true可报错   修改同一行代码-->
 
 

@@ -21,7 +21,7 @@ import java.util.List;
 @Mapper
 @Repository
 public interface TypingHistoryMapper extends BaseMapper<TypingHistory> {
-    TypingHistory getTypingMatchHistory(@Param("userId") int userId,
+    TypingHistory getTypingMatchHistory(@Param("userId") long userId,
                                         @Param("mobile") boolean mobile,
                                         @Param("typeDate") String typeDate);
 

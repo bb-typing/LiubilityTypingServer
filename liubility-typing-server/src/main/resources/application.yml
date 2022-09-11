@@ -14,6 +14,8 @@ spring:
     nacos:
       discovery:
         server-addr: https://nacos.tyu.wiki
+        enabled: false
+        register-enabled: false
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://remotehost:3307/liubility?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8
@@ -29,10 +31,22 @@ spring:
       max-lifetime: 60000
       connection-timeout: 30000
       connection-test-query: SELECT 1
-
+  redis:
+    database: 0
+    host: remotehost
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: -1ms
+        min-idle: 0
+      shutdown-timeout: 100ms
+    password:
+    port: 9736
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
   type-enums-package: org.liubility.typing.server.constant
   mapper-locations: classpath:/mappers/*Mapper.xml
   type-aliases-package: org.liubility.typing.server.domain.entity.*
@@ -43,6 +57,18 @@ mybatis-plus:
 
 jwt:
   expirationTime: 86400000
-  secretKey: haofangErpJwtSecretKey
+  secretKey: ${JWT_SECRET}
 
-secret: NwobS3vT3wShr53wI2fvmVbOtV6I5dq9b2n6Zat2DZR
+secret: ${MD5_SECRET}
+minio:
+  host: 192.168.1.150
+  port: 9000
+  access-key: minioadmin
+  secret-key: minioadmin
+
+cl-db:
+  host: ${CL_DB_HOST}
+  port: ${CL_DB_PORT}
+  user: ${CL_DB_USER}
+  password: ${CL_DB_PSW}
+  syn-open: true

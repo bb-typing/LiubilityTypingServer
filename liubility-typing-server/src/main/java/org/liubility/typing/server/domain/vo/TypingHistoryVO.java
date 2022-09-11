@@ -18,11 +18,11 @@ import java.sql.Date;
 @Data
 @Translation
 public class TypingHistoryVO {
-    private int id;
+    private long id;
 
-    private int userId;
+    private long userId;
 
-    private int articleId;
+    private long articleId;
 
     @TableHeader("比赛日期")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")

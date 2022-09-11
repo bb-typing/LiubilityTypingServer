@@ -16,12 +16,12 @@ import java.util.Date;
 @Data
 public class TypingMatchVO {
 
-    private Integer id;
+    private Long id;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date holdDate;
 
-    private Integer articleId;
+    private Long articleId;
 
     private String author;
 

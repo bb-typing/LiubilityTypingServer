@@ -11,7 +11,7 @@ import org.liubility.typing.server.domain.entity.TypingUser;
  * @Des:
  */
 public interface TypingUserService extends IService<TypingUser>{
-    TypingUser getTypeUserById(Integer userId);
+    TypingUser getTypeUserById(Long userId);
 
-    NumDto changeNum(Integer userId,NumDto numDto);
+    NumDto changeNum(Long userId,NumDto numDto);
 }

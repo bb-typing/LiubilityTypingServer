@@ -23,8 +23,8 @@ import java.sql.Date;
 @Data
 @TableName("typing_user")
 public class TypingUser extends Model<TypingUser> {
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 
     private int num;
 

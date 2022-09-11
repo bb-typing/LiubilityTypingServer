@@ -22,7 +22,7 @@ public class ArticleController {
 
     @GetMapping("/getHistoryArticle")
     @ApiOperation("通过articleId获取文章详情")
-    public Result<Article> getArticleById(@RequestParam Integer articleId) {
+    public Result<Article> getArticleById(@RequestParam Long articleId) {
         return Result.success(articleService.getArticleById(articleId));
     }
 }

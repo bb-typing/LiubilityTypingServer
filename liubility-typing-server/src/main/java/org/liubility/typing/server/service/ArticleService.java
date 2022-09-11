@@ -12,5 +12,5 @@ import org.liubility.typing.server.domain.entity.Article;
 public interface ArticleService extends IService<Article> {
     Article getArticle(Article article);
 
-    Article getArticleById(Integer articleId);
+    Article getArticleById(Long articleId);
 }

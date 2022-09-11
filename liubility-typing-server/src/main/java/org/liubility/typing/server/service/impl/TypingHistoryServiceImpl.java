@@ -36,7 +36,7 @@ public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, T
     private ArticleService articleService;
 
     @Override
-    public IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> historyIPage, Integer userId) {
+    public IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> historyIPage, Long userId) {
         LambdaQueryWrapper<TypingHistory> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(TypingHistory::getUserId, userId);
         IPage<TypingHistory> page = this.page(historyIPage, lambdaQueryWrapper);
