@@ -14,8 +14,8 @@ spring:
     nacos:
       discovery:
         server-addr: https://nacos.tyu.wiki
-        enabled: false
-        register-enabled: false
+        enabled: true
+        register-enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://remotehost:3307/liubility?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8
