@@ -1,6 +1,6 @@
 #!/bin/bash
 #构建昊方服务的docker shell
-
+source /etc/profile
 DOCKER_CONTAINER=liubility-typing-server
 DOCKER_IMG=liubility-typing-server-image
 SERVER_PORT=9999
