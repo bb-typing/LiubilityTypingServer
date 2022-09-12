@@ -12,9 +12,25 @@ import org.liubility.typing.server.domain.vo.TypingTips;
  * @Description:
  */
 public interface WordLibService extends IService<WordLibInfo> {
-    TrieWordParser uploadWordLib(Long userId, WordLibDTO wordLibDTO);
+    /**
+     * 上传用户词库
+     * @param userId    用户id
+     * @param wordLibDTO    词库信息
+     */
+    void uploadWordLib(Long userId, WordLibDTO wordLibDTO);
 
+    /**
+     * 加载用户默认词库
+     * @param userId    用户id
+     * @return  词库解析器
+     */
     TrieWordParser loadWordLib(Long userId);
 
+    /**
+     * 获取词语提示
+     * @param userId    用户id
+     * @param article   需要词提的文章
+     * @return  TypingTips
+     */
     TypingTips typingTips(Long userId, String article);
 }

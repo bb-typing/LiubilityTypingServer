@@ -13,6 +13,7 @@ import org.liubility.typing.server.code.parse.TrieWordParser;
 import org.liubility.typing.server.code.reader.MinioReaderFactory;
 import org.liubility.typing.server.code.reader.ReaderFactory;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
+import org.liubility.typing.server.domain.entity.TypingUser;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
 import org.liubility.typing.server.domain.vo.TypingTips;
 import org.liubility.typing.server.enums.exception.WordLibCode;
@@ -21,7 +22,9 @@ import org.liubility.typing.server.minio.BucketConstant;
 import org.liubility.typing.server.minio.Minio;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
 import org.liubility.typing.server.minio.service.OssFileInfoVO;
+import org.liubility.typing.server.service.TypingUserService;
 import org.liubility.typing.server.service.WordLibService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,13 +47,16 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
 
     private final MinioServiceImpl minioService;
 
-    public WordLibServiceImpl(Minio minio, MinioServiceImpl minioService) {
+    private final TypingUserService typingUserService;
+
+    public WordLibServiceImpl(Minio minio, MinioServiceImpl minioService, TypingUserService typingUserService) {
         this.minio = minio;
         this.minioService = minioService;
+        this.typingUserService = typingUserService;
     }
 
     @Override
-    public TrieWordParser uploadWordLib(Long userId, WordLibDTO wordLibDTO) {
+    public void uploadWordLib(Long userId, WordLibDTO wordLibDTO) {
         OssFileInfoVO upload;
         try {
             upload = minioService.upload(wordLibDTO.getFile(), BucketConstant.WORD_LIB_BUCKET);
@@ -78,7 +84,7 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
             throw new LBRuntimeException(WordLibCode.INSERT_ERROR, e);
         }
         try {
-            return loadWordLib(wordLibInfo);
+            loadWordLib(wordLibInfo);
         } catch (Exception e) {
             log.error("加载词库异常", e);
             //回滚
@@ -88,20 +94,21 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         }
     }
 
-
     @Override
     public TrieWordParser loadWordLib(Long userId) {
-        WordLibInfo cond = WordLibInfo.builder().userId(userId).priority(1).build();
-        WordLibInfo wordLibInfo = selectOneByEntity(cond);
-        return loadWordLib(wordLibInfo);
+        WordLibInfo wordLibInfo = getUserDefaultWordLib(userId);
+        TrieWordParser trieWordParser = wordParserTimingMap.get(wordLibInfo.getId());
+        if (trieWordParser == null) {
+            return loadWordLib(wordLibInfo);
+        } else {
+            return trieWordParser;
+        }
     }
+
 
     @Override
     public TypingTips typingTips(Long userId, String article) {
-        TrieWordParser trieWordParser = wordParserTimingMap.get(userId);
-        if (trieWordParser == null) {
-            trieWordParser = loadWordLib(userId);
-        }
+        TrieWordParser trieWordParser = loadWordLib(userId);
         SubscriptInstance[] subscriptInstances = trieWordParser.parse(article);
         String codes = trieWordParser.printCode(subscriptInstances);
         return new TypingTips(subscriptInstances, codes);
@@ -117,7 +124,21 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         return list(wordLibInfoLambdaQueryWrapper);
     }
 
-    public TrieWordParser loadWordLib(WordLibInfo wordLibInfo) {
+    public WordLibInfo getUserDefaultWordLib(Long userId) {
+        TypingUser typeUserById = typingUserService.getTypeUserById(userId);
+        if (typeUserById.getWordLibId() == null) {
+            throw new LBRuntimeException(WordLibCode.NOT_SET_DEFAULT_WORD_LIB);
+        }
+        WordLibInfo wordLibInfo = getById(typeUserById.getWordLibId());
+        if (wordLibInfo == null) {
+            throw new LBRuntimeException(WordLibCode.NOT_FOUNT_DEFAULT_WORD_LIB);
+        }
+        return wordLibInfo;
+    }
+
+
+    private TrieWordParser loadWordLib(WordLibInfo wordLibInfo) {
+        log.info("加载词库信息：{}", wordLibInfo);
         String duplicateSymbols = wordLibInfo.getDuplicateSymbols();
         ReaderFactory readerFactory = new MinioReaderFactory(minio);
         TrieWordLib symbol = new TrieWordLib(readerFactory, "symbol.txt");
@@ -134,7 +155,8 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         MockTypeConvert mockTypeConvert = new MockTypeConvert(duplicateSymbols, wordLib.getDefaultUpSymbol());
 
         TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, mockTypeConvert, compareFeelDeviationWeights);
-        wordParserTimingMap.put(wordLibInfo.getUserId(), trieWordParser);
+        log.info("加载词库{}成功", wordLibInfo.getId());
+        wordParserTimingMap.put(wordLibInfo.getId(), trieWordParser);
         return trieWordParser;
     }
 }
