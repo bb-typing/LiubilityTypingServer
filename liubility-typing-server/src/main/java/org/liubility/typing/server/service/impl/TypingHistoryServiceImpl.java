@@ -27,20 +27,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, TypingHistory> implements TypingHistoryService {
 
-    @Autowired
-    private TypeHistoryMapStruct typeHistoryMapStruct;
+    private final TypeHistoryMapStruct typeHistoryMapStruct;
 
-    @Autowired
-    private ArticleMapStruct articleMapStruct;
+    private final ArticleMapStruct articleMapStruct;
 
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
+
+    public TypingHistoryServiceImpl(TypeHistoryMapStruct typeHistoryMapStruct, ArticleMapStruct articleMapStruct, ArticleService articleService) {
+        this.typeHistoryMapStruct = typeHistoryMapStruct;
+        this.articleMapStruct = articleMapStruct;
+        this.articleService = articleService;
+    }
 
     @Override
-    public IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> historyIPage, Long userId) {
+    public IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> iPage, Long userId) {
         LambdaQueryWrapper<TypingHistory> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(TypingHistory::getUserId, userId);
-        IPage<TypingHistory> page = this.page(historyIPage, lambdaQueryWrapper);
+        IPage<TypingHistory> page = this.page(iPage, lambdaQueryWrapper);
         return typeHistoryMapStruct.toDtoPage(page);
     }
 

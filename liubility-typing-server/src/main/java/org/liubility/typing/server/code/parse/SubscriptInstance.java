@@ -23,13 +23,13 @@ public class SubscriptInstance {
 
     private String type;
 
-    private int next;//下一跳
+    private int next;
 
     /**
      * <权重值(编码长度等),<上一跳下标,上一跳信息>>
      */
     @JsonIgnore
-    private TreeMap<Double, TreeMap<Integer, PreInfo>> preInfoMap;//上一跳
+    private TreeMap<Double, TreeMap<Integer, PreInfo>> preInfoMap;
 
     @JsonIgnore
     private boolean useSign;

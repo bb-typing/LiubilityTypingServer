@@ -5,14 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liubility.commons.controller.BaseController;
-import org.liubility.commons.dto.account.TypeHistoryDto;
 import org.liubility.commons.http.response.normal.Result;
 import org.liubility.commons.http.response.table.PageTable;
 import org.liubility.commons.http.response.table.TableFactory;
 import org.liubility.commons.http.response.table.TableRef;
 import org.liubility.typing.server.domain.dto.UserWordLibSettingDTO;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
-import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.vo.TypingTips;
 import org.liubility.typing.server.domain.vo.UserWordSettingListPageVO;
 import org.liubility.typing.server.domain.vo.WordLibListPageVO;
@@ -58,6 +56,7 @@ public class WordLibController extends BaseController {
     @PostMapping(value = "/setting")
     @ApiOperation("设置词库属性")
     public Result<String> setting(UserWordLibSettingDTO userWordLibSettingDTO) {
+        userWordLibSettingDTO.setUserId(getUserId());
         userWordLibSettingService.wordLibSetting(userWordLibSettingDTO);
         return Result.success("设置成功");
     }
@@ -70,6 +69,8 @@ public class WordLibController extends BaseController {
         });
         return Result.success(table);
     }
+
+
 
     @PostMapping(value = "/loadWordLib")
     @ApiOperation("用户加载云词提")

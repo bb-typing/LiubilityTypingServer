@@ -14,7 +14,20 @@ import org.liubility.commons.exception.LBRuntimeException;
  * @Des:
  */
 public interface TypingHistoryService extends IService<TypingHistory> {
-    IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> historyIPage, Long userId);
+    /**
+     * 根据用户id获取跟打历史分页
+     *
+     * @param iPage 分页参数
+     * @param userId       用户id
+     * @return 历史跟打记录分页
+     */
+    IPage<TypeHistoryDto> getTypeHistoryByUserId(IPage<TypingHistory> iPage, Long userId);
 
-    String uploadHistoryAndArticle(HistoryArticleDto historyArticleDto) throws LBRuntimeException;
+    /**
+     * 上传跟打历史
+     *
+     * @param historyArticleDto 历史与文章详情
+     * @return message
+     */
+    String uploadHistoryAndArticle(HistoryArticleDto historyArticleDto);
 }

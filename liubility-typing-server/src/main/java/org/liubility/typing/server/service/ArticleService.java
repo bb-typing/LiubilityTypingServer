@@ -10,7 +10,19 @@ import org.liubility.typing.server.domain.entity.Article;
  * @Des:
  */
 public interface ArticleService extends IService<Article> {
+    /**
+     * 从数据库中获取文章
+     *
+     * @param article 条件
+     * @return Article
+     */
     Article getArticle(Article article);
 
+    /**
+     * 根据文章id获取文章
+     *
+     * @param articleId 文章id
+     * @return Article
+     */
     Article getArticleById(Long articleId);
 }

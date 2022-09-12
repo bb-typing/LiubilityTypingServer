@@ -80,7 +80,9 @@ public class WordLib {
         try (BufferedReader reader = readerFactory.getReader(getWordLibFilePath())) {
             String temp;
             while ((temp = reader.readLine()) != null) {
-                if (temp.startsWith("---")) continue;
+                if (temp.startsWith("---")) {
+                    continue;
+                }
                 if (temp.contains("#")) {
                     temp = temp.substring(0, temp.indexOf("#"));
                 }
@@ -88,7 +90,9 @@ public class WordLib {
                 if (spliced.length == 1) {
                     spliced = new String[]{spliced[0], "? "};
                 }
-                if (spliced.length != 2) continue;
+                if (spliced.length != 2) {
+                    continue;
+                }
                 String word = spliced[0];
                 String code = spliced[1];
                 code = checkDuplicate(code);

@@ -8,5 +8,12 @@ import java.io.BufferedReader;
  * @Description:
  */
 public interface ReaderFactory {
+
+    /**
+     * 获取读取词库的reader
+     *
+     * @param path 词库路径
+     * @return BufferedReader
+     */
     BufferedReader getReader(String path);
 }

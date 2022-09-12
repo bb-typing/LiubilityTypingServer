@@ -37,7 +37,9 @@ public class TrieWordLib extends WordLib {
     @Override
     public boolean dictPut(String word, String code) {
         List<String> wordChars = word.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
-        if (wordChars.size() == 0) return true;
+        if (wordChars.size() == 0) {
+            return true;
+        }
         TrieNode node = getNode(word);
         if (node == null) {
             node = root;

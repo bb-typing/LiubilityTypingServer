@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
+
     @Override
     public Article getArticle(Article article) {
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();

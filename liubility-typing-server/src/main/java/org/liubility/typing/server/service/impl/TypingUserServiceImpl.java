@@ -27,8 +27,11 @@ public class TypingUserServiceImpl extends ServiceImpl<TypingUserMapper, TypingU
     @Value("${secret}")
     private String secret;
 
-    @Autowired
-    private TypeUserMapStruct typeUserMapStruct;
+    private final TypeUserMapStruct typeUserMapStruct;
+
+    public TypingUserServiceImpl(TypeUserMapStruct typeUserMapStruct) {
+        this.typeUserMapStruct = typeUserMapStruct;
+    }
 
     @Override
     public TypingUser getTypeUserById(Long userId) {

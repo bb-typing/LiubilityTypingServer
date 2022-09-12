@@ -41,7 +41,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build()
-                .globalRequestParameters(getGlobalRequestParameters());//注意这里
+                .globalRequestParameters(getGlobalRequestParameters());
     }
 
     private ApiInfo apiInfo() {

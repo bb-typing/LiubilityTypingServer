@@ -24,11 +24,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountService {
-    @Autowired
-    private JwtServiceImpl jwtService;
 
-    @Autowired
-    private AccountMapStruct accountMapStruct;
+    private final JwtServiceImpl jwtService;
+
+    private final AccountMapStruct accountMapStruct;
+
+    public AccountServiceImpl(JwtServiceImpl jwtService, AccountMapStruct accountMapStruct) {
+        this.jwtService = jwtService;
+        this.accountMapStruct = accountMapStruct;
+    }
 
     @Override
     public AccountDto getAccountByName(String username) {

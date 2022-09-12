@@ -40,5 +40,12 @@ public interface WordLibService extends IService<WordLibInfo> {
     TypingTips typingTips(Long userId, String article);
 
 
+    /**
+     * 根据用户id获取词库分页
+     *
+     * @param iPage  分页参数
+     * @param userId 用户id
+     * @return 词库分页
+     */
     IPage<WordLibListPageVO> getPageByUserId(IPage<WordLibListPageVO> iPage, Long userId);
 }

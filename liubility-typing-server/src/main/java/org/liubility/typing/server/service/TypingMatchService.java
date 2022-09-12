@@ -17,9 +17,31 @@ import java.util.Date;
  * @Des:
  */
 public interface TypingMatchService extends IService<TypingMatch> {
-    TypingMatchVO getTodayMatch(Long userId, Boolean mobile) throws LBException;
+    /**
+     * 获取今日生稿赛文
+     *
+     * @param userId 用户id
+     * @param mobile 手机端或客户端
+     * @return TypingMatchVO
+     */
+    TypingMatchVO getTodayMatch(Long userId, Boolean mobile);
 
+    /**
+     * 上传生稿赛文成绩
+     *
+     * @param userId        用户id
+     * @param typingHistory 成绩历史
+     * @return message
+     */
     String uploadMatch(Long userId, TypingHistory typingHistory);
 
+    /**
+     * 获取某日比赛成绩
+     *
+     * @param date      日期
+     * @param matchType 比赛类型
+     * @param mobile    手机端或客户端
+     * @return 成绩分页
+     */
     PageTable<TypingHistoryVO> getMatchAch(Date date, Integer matchType, Boolean mobile);
 }

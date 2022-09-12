@@ -14,13 +14,11 @@ import org.liubility.typing.server.domain.entity.TypingHistory;
 import org.liubility.typing.server.domain.entity.TypingMatch;
 import org.liubility.typing.server.domain.vo.TypingHistoryVO;
 import org.liubility.typing.server.domain.vo.TypingMatchVO;
-import org.liubility.typing.server.enums.exception.HistoryCode;
 import org.liubility.typing.server.enums.exception.TypingMatchCode;
 import org.liubility.typing.server.mappers.ArticleMapper;
 import org.liubility.typing.server.mappers.TypingHistoryMapper;
 import org.liubility.typing.server.mappers.TypingMatchMapper;
 import org.liubility.typing.server.service.TypingMatchService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,20 +36,22 @@ import java.util.List;
 @Service
 public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, TypingMatch> implements TypingMatchService {
 
-    private static final TimingMap<Long, Long> openTljMatchUserList = new TimingMap<>();
+    private static final TimingMap<Long, Long> OPEN_TLJ_MATCH_USER_LIST = new TimingMap<>();
 
-    @Autowired
-    private TypingHistoryMapper typingHistoryMapper;
+    private final TypingHistoryMapper typingHistoryMapper;
 
-    @Autowired
-    private ArticleMapper articleMapper;
+    private final ArticleMapper articleMapper;
 
+    public TypingMatchServiceImpl(TypingHistoryMapper typingHistoryMapper, ArticleMapper articleMapper) {
+        this.typingHistoryMapper = typingHistoryMapper;
+        this.articleMapper = articleMapper;
+    }
 
     @Override
-    public TypingMatchVO getTodayMatch(Long userId, Boolean mobile) throws LBException {
+    public TypingMatchVO getTodayMatch(Long userId, Boolean mobile) {
         TypingHistory typingMatchHistory = typingHistoryMapper.getTypingMatchHistory(userId, mobile, DateUtil.today());
         if (typingMatchHistory != null) {
-            throw new LBException(TypingMatchCode.GET_AGAIN);
+            throw new LBRuntimeException(TypingMatchCode.GET_AGAIN);
         }
 
         insertTodayMatch();
@@ -64,14 +64,14 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
             emptyHistory.setMatchType(1);
             emptyHistory.setMobile(mobile);
             if (emptyHistory.insert()) {
-                openTljMatchUserList.put(userId, emptyHistory.getId());
+                OPEN_TLJ_MATCH_USER_LIST.put(userId, emptyHistory.getId());
                 return typingMatchVO;
             }
         }
-        throw new LBException("获取失败");
+        throw new LBRuntimeException("获取失败");
     }
 
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, rollbackFor = Exception.class)
     protected void insertTodayMatch() {
         if (!baseMapper.existMatch(DateUtil.today())) {
             String random = ArticleUtil.getRandomContent();
@@ -88,13 +88,13 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
 
     @Override
     public String uploadMatch(Long userId, TypingHistory typingHistory) {
-        if (openTljMatchUserList.containsKey(userId)) {
+        if (OPEN_TLJ_MATCH_USER_LIST.containsKey(userId)) {
             TypingMatchVO todayMatch = baseMapper.getTodayMatch(DateUtil.today());
-            typingHistory.setId(openTljMatchUserList.get(userId));
+            typingHistory.setId(OPEN_TLJ_MATCH_USER_LIST.get(userId));
             typingHistory.setArticleId(todayMatch.getArticleId());
             typingHistory.setUserId(userId);
             if (typingHistory.updateById()) {
-                openTljMatchUserList.remove(userId);
+                OPEN_TLJ_MATCH_USER_LIST.remove(userId);
                 return "上传成功";
             } else {
                 throw new LBRuntimeException(TypingMatchCode.UPLOAD_FAIL);

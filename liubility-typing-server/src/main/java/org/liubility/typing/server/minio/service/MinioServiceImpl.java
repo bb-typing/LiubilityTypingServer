@@ -28,8 +28,11 @@ import java.util.UUID;
 @Service
 public class MinioServiceImpl {
 
-    @Autowired
-    private Minio minio;
+    private final Minio minio;
+
+    public MinioServiceImpl(Minio minio) {
+        this.minio = minio;
+    }
 
     public OssFileInfoVO upload(MultipartFile file, String bucketName) {
         String objectName = generateName(file);

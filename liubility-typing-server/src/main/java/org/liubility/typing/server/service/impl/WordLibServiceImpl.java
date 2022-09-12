@@ -20,11 +20,9 @@ import org.liubility.typing.server.domain.vo.TypingTips;
 import org.liubility.typing.server.domain.vo.WordLibListPageVO;
 import org.liubility.typing.server.enums.exception.WordLibCode;
 import org.liubility.typing.server.mappers.WordLibMapper;
-import org.liubility.typing.server.mapstruct.WordLibInfoMapStruct;
 import org.liubility.typing.server.minio.BucketConstant;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
 import org.liubility.typing.server.minio.service.OssFileInfoVO;
-import org.liubility.typing.server.service.TypingUserService;
 import org.liubility.typing.server.service.UserWordLibSettingService;
 import org.liubility.typing.server.service.WordLibService;
 import org.springframework.stereotype.Service;
@@ -140,18 +138,21 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
 
 
     private TrieWordLib loadWordLib(WordLibInfo wordLibInfo) {
-        log.info("加载词库信息：{}", wordLibInfo);
         CodeConfig.CacheTrieWordLib wordLib;
         CodeConfig.CacheTrieWordLib symbol;
         symbol = wordLibCache.get(0L);
         wordLib = wordLibCache.get(wordLibInfo.getId());
         if (symbol == null) {
+            log.info("symbol word lib 正在加载");
             symbol = new CodeConfig.CacheTrieWordLib(0L, minioReaderFactory, "symbol.txt");
             wordLibCache.put(0L, symbol);
+            log.info("symbol word lib 加载完成");
         }
         if (wordLib == null) {
+            log.info("加载词库{}信息：{}", wordLibInfo.getWordLibName(), wordLibInfo);
             wordLib = new CodeConfig.CacheTrieWordLib(wordLibInfo.getId(), minioReaderFactory, wordLibInfo.getWordLibPath(), wordLibInfo.getDuplicateSymbols(), wordLibInfo.getCodeMaxLength(), wordLibInfo.getLeaderSymbols());
             wordLibCache.put(wordLibInfo.getId(), wordLib);
+            log.info("加载词库{}信息完成", wordLibInfo.getWordLibName());
         }
 
         wordLibInfo.setWordCount(wordLib.getWordCount());
@@ -166,17 +167,17 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         if (trieWordParser != null) {
             return trieWordParser;
         }
-
         TrieWordLib wordLib = loadWordLib(wordLibInfo);
         CodeConfig.CacheTrieWordLib symbol = wordLibCache.get(0L);
 
+        log.info("加载parser：{}", userWordLibSetting);
         CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(userWordLibSetting.getDuplicateSymbolWeight(), userWordLibSetting.getWordLengthWeight(), wordLib.getFilterDuplicateSymbols());
         compareFeelDeviationWeights.addKeyAllBoardPartition(Arrays.asList(userWordLibSetting.getKeyBoardPartition().split("\\|")));
 
         MockTypeConvert mockTypeConvert = new MockTypeConvert(wordLibInfo.getDuplicateSymbols(), wordLib.getDefaultUpSymbol());
 
         trieWordParser = new TrieWordParser(wordLib, symbol, mockTypeConvert, compareFeelDeviationWeights);
-        log.info("加载词库{}成功", wordLibInfo.getId());
+        log.info("加载parser：{}成功", userWordLibSetting.getId());
         userWordLibSettingService.cache(wordLibInfo.getId(), trieWordParser);
         return trieWordParser;
     }
