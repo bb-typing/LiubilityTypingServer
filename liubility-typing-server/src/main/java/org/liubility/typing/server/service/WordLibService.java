@@ -1,10 +1,12 @@
 package org.liubility.typing.server.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.liubility.typing.server.code.parse.TrieWordParser;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
 import org.liubility.typing.server.domain.vo.TypingTips;
+import org.liubility.typing.server.domain.vo.WordLibListPageVO;
 
 /**
  * @Author: JDragon
@@ -14,23 +16,29 @@ import org.liubility.typing.server.domain.vo.TypingTips;
 public interface WordLibService extends IService<WordLibInfo> {
     /**
      * 上传用户词库
-     * @param userId    用户id
-     * @param wordLibDTO    词库信息
+     *
+     * @param userId     用户id
+     * @param wordLibDTO 词库信息
      */
     void uploadWordLib(Long userId, WordLibDTO wordLibDTO);
 
     /**
      * 加载用户默认词库
-     * @param userId    用户id
-     * @return  词库解析器
+     *
+     * @param userId 用户id
+     * @return 词库解析器
      */
-    TrieWordParser loadWordLib(Long userId);
+    TrieWordParser loadParser(Long userId);
 
     /**
      * 获取词语提示
-     * @param userId    用户id
-     * @param article   需要词提的文章
-     * @return  TypingTips
+     *
+     * @param userId  用户id
+     * @param article 需要词提的文章
+     * @return TypingTips
      */
     TypingTips typingTips(Long userId, String article);
+
+
+    IPage<WordLibListPageVO> getPageByUserId(IPage<WordLibListPageVO> iPage, Long userId);
 }

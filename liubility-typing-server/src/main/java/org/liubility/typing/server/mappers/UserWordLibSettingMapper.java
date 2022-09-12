@@ -5,18 +5,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.liubility.typing.server.domain.entity.WordLibInfo;
+import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.vo.UserWordSettingListPageVO;
-import org.liubility.typing.server.domain.vo.WordLibListPageVO;
 import org.springframework.stereotype.Repository;
 
 /**
  * @Author: JDragon
- * @Data:2022/9/11 19:10
+ * @Data:2022/9/12 13:52
  * @Description:
  */
-@Mapper
+
 @Repository
-public interface WordLibMapper extends BaseMapper<WordLibInfo> {
-    Page<WordLibListPageVO> getPageByUserId(IPage<WordLibListPageVO> page, @Param("userId") Long userId);
+@Mapper
+public interface UserWordLibSettingMapper extends BaseMapper<UserWordLibSetting> {
+    Page<UserWordSettingListPageVO> getPageByUserId(IPage<UserWordSettingListPageVO> page, @Param("userId") Long userId);
 }

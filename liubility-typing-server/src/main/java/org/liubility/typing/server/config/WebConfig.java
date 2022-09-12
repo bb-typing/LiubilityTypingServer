@@ -29,17 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addWebRequestInterceptor(contextHolderInterceptor());
     }
-
-    @Bean
-    public Minio minio(MinioProperties minioProperties) {
-        Minio minio = Minio.builder()
-                .endpoint("http://" + minioProperties.getHost() + ":" + minioProperties.getPort())
-                .accessKey(minioProperties.getAccessKey())
-                .secretKey(minioProperties.getSecretKey())
-                .build();
-        minio.init();
-        return minio;
-    }
 //    @Bean
 //    public CorsFilter corsFilter() {
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

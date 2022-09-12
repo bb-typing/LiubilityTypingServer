@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.liubility.typing.server.mappers.WordLibMapper">
+    <select id="getPageByUserId" resultType="org.liubility.typing.server.domain.vo.WordLibListPageVO">
+        select wli.id,
+               wli.user_id,
+               ba.username,
+               wli.word_count,
+               wli.word_max_length,
+               wli.code_max_length,
+               wli.duplicate_symbols
+        from word_lib_info wli
+                 join base_account ba on ba.id = wli.user_id and ba.id = #{userId}
+    </select>
+</mapper>

@@ -1,16 +1,24 @@
 package org.liubility.typing.server.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liubility.commons.controller.BaseController;
+import org.liubility.commons.dto.account.TypeHistoryDto;
 import org.liubility.commons.http.response.normal.Result;
+import org.liubility.commons.http.response.table.PageTable;
+import org.liubility.commons.http.response.table.TableFactory;
+import org.liubility.commons.http.response.table.TableRef;
+import org.liubility.typing.server.domain.dto.UserWordLibSettingDTO;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
+import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.vo.TypingTips;
+import org.liubility.typing.server.domain.vo.UserWordSettingListPageVO;
+import org.liubility.typing.server.domain.vo.WordLibListPageVO;
+import org.liubility.typing.server.service.UserWordLibSettingService;
 import org.liubility.typing.server.service.WordLibService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author: JDragon
@@ -24,8 +32,11 @@ public class WordLibController extends BaseController {
 
     private final WordLibService wordLibService;
 
-    public WordLibController(WordLibService wordLibService) {
+    private final UserWordLibSettingService userWordLibSettingService;
+
+    public WordLibController(WordLibService wordLibService, UserWordLibSettingService userWordLibSettingService) {
         this.wordLibService = wordLibService;
+        this.userWordLibSettingService = userWordLibSettingService;
     }
 
     @PostMapping(value = "/uploadWordLib")
@@ -35,10 +46,35 @@ public class WordLibController extends BaseController {
         return Result.success("上传成功");
     }
 
+    @GetMapping(value = "/page")
+    @ApiOperation("个人上传词库列表")
+    public Result<PageTable<WordLibListPageVO>> page() {
+        IPage<WordLibListPageVO> page = wordLibService.getPageByUserId(new Page<>(getPageNum(), getPageSize()), getUserId());
+        PageTable<WordLibListPageVO> table = TableFactory.buildPageTable(page, new TableRef<WordLibListPageVO>(page.getRecords()) {
+        });
+        return Result.success(table);
+    }
+
+    @PostMapping(value = "/setting")
+    @ApiOperation("设置词库属性")
+    public Result<String> setting(UserWordLibSettingDTO userWordLibSettingDTO) {
+        userWordLibSettingService.wordLibSetting(userWordLibSettingDTO);
+        return Result.success("设置成功");
+    }
+
+    @GetMapping(value = "/setting")
+    @ApiOperation("获取词库属性")
+    public Result<PageTable<UserWordSettingListPageVO>> getSetting() {
+        IPage<UserWordSettingListPageVO> page = userWordLibSettingService.getPageByUserId(new Page<>(getPageNum(), getPageSize()), getUserId());
+        PageTable<UserWordSettingListPageVO> table = TableFactory.buildPageTable(page, new TableRef<UserWordSettingListPageVO>(page.getRecords()) {
+        });
+        return Result.success(table);
+    }
+
     @PostMapping(value = "/loadWordLib")
     @ApiOperation("用户加载云词提")
     public Result<String> loadWordLib() {
-        wordLibService.loadWordLib(getUserId());
+        wordLibService.loadParser(getUserId());
         return Result.success("加载成功");
     }
 

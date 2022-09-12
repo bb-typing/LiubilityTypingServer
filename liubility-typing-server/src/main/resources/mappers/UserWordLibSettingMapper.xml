@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.liubility.typing.server.mappers.UserWordLibSettingMapper">
+    <select id="getPageByUserId" resultType="org.liubility.typing.server.domain.vo.UserWordSettingListPageVO">
+        select uwls.id,
+               uwls.user_id,
+               ba.username,
+               uwls.word_lib_id,
+               wli.word_lib_name,
+               uwls.key_board_partition,
+               uwls.duplicate_symbol_weight,
+               uwls.word_length_weight
+        from user_word_lib_setting uwls
+                 join base_account ba on ba.id = uwls.user_id and ba.id = #{userId}
+                 join word_lib_info wli on wli.id = uwls.word_lib_id
+    </select>
+</mapper>

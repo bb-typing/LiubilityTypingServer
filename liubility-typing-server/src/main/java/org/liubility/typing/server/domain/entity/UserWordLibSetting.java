@@ -8,36 +8,29 @@ import lombok.*;
 
 /**
  * @Author: JDragon
- * @Data:2022/9/11 19:07
+ * @Data:2022/9/12 13:51
  * @Description:
  */
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("word_lib_info")
-public class WordLibInfo extends Model<WordLibInfo> {
+@TableName("user_word_lib_setting")
+public class UserWordLibSetting extends Model<UserWordLibSetting> {
 
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     private Long userId;
 
-    private String wordLibName;
+    private Long wordLibId;
 
-    private String wordLibPath;
+    private String keyBoardPartition;
 
-    private Integer storageType;
+    private Double duplicateSymbolWeight;
 
-    private Integer wordCount;
+    private Double wordLengthWeight;
 
-    private Integer wordMaxLength;
-
-    private Integer codeMaxLength;
-
-    private String leaderSymbols;
-
-    private String duplicateSymbols;
+    private Boolean defaultLib;
 }

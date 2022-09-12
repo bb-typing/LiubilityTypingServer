@@ -1,6 +1,7 @@
 package org.liubility.typing.server.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.liubility.commons.exception.LBRuntimeException;
@@ -10,21 +11,22 @@ import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.code.parse.TrieWordParser;
-import org.liubility.typing.server.code.reader.MinioReaderFactory;
 import org.liubility.typing.server.code.reader.ReaderFactory;
+import org.liubility.typing.server.config.CodeConfig;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
-import org.liubility.typing.server.domain.entity.TypingUser;
+import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
 import org.liubility.typing.server.domain.vo.TypingTips;
+import org.liubility.typing.server.domain.vo.WordLibListPageVO;
 import org.liubility.typing.server.enums.exception.WordLibCode;
 import org.liubility.typing.server.mappers.WordLibMapper;
+import org.liubility.typing.server.mapstruct.WordLibInfoMapStruct;
 import org.liubility.typing.server.minio.BucketConstant;
-import org.liubility.typing.server.minio.Minio;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
 import org.liubility.typing.server.minio.service.OssFileInfoVO;
 import org.liubility.typing.server.service.TypingUserService;
+import org.liubility.typing.server.service.UserWordLibSettingService;
 import org.liubility.typing.server.service.WordLibService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,19 +42,19 @@ import java.util.List;
 @Slf4j
 public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> implements WordLibService {
 
-    private final Minio minio;
+    @Resource
+    private TimingMap<Long, CodeConfig.CacheTrieWordLib> wordLibCache;
 
     @Resource
-    private TimingMap<Long, TrieWordParser> wordParserTimingMap;
+    private ReaderFactory minioReaderFactory;
 
     private final MinioServiceImpl minioService;
 
-    private final TypingUserService typingUserService;
+    private final UserWordLibSettingService userWordLibSettingService;
 
-    public WordLibServiceImpl(Minio minio, MinioServiceImpl minioService, TypingUserService typingUserService) {
-        this.minio = minio;
+    public WordLibServiceImpl(MinioServiceImpl minioService, UserWordLibSettingService userWordLibSettingService) {
         this.minioService = minioService;
-        this.typingUserService = typingUserService;
+        this.userWordLibSettingService = userWordLibSettingService;
     }
 
     @Override
@@ -66,15 +68,21 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         }
         WordLibInfo wordLibInfo = WordLibInfo.builder()
                 .userId(userId)
+                .wordLibName(wordLibDTO.getWordLibName())
                 .wordLibPath(upload.getFilePath())
                 .storageType(1)
-                .duplicateSymbols(wordLibDTO.getDuplicateSymbols())
                 .codeMaxLength(wordLibDTO.getCodeMaxLength())
-                .keyBoardPartition(wordLibDTO.getKeyBoardPartition())
-                .duplicateSymbolWeight(wordLibDTO.getDuplicateSymbolWeight())
-                .wordLengthWeight(wordLibDTO.getWordLengthWeight())
                 .leaderSymbols(wordLibDTO.getLeaderSymbols())
+                .duplicateSymbols(wordLibDTO.getDuplicateSymbols())
                 .build();
+        try {
+            loadWordLib(wordLibInfo);
+        } catch (Exception e) {
+            log.error("加载词库异常", e);
+            //回滚
+            minioService.delete(upload.getBucket(), upload.getFilePath());
+            throw new LBRuntimeException(WordLibCode.LOAD_LIB_ERROR, e);
+        }
         try {
             wordLibInfo.insert();
         } catch (Exception e) {
@@ -83,35 +91,32 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
             minioService.delete(upload.getBucket(), upload.getFilePath());
             throw new LBRuntimeException(WordLibCode.INSERT_ERROR, e);
         }
-        try {
-            loadWordLib(wordLibInfo);
-        } catch (Exception e) {
-            log.error("加载词库异常", e);
-            //回滚
-            minioService.delete(upload.getBucket(), upload.getFilePath());
-            wordLibInfo.deleteById();
-            throw new LBRuntimeException(WordLibCode.LOAD_LIB_ERROR, e);
-        }
     }
 
     @Override
-    public TrieWordParser loadWordLib(Long userId) {
-        WordLibInfo wordLibInfo = getUserDefaultWordLib(userId);
-        TrieWordParser trieWordParser = wordParserTimingMap.get(wordLibInfo.getId());
+    public TrieWordParser loadParser(Long userId) {
+        UserWordLibSetting userDefaultUserSetting = userWordLibSettingService.getUserDefaultUserSetting(userId);
+        TrieWordParser trieWordParser = userWordLibSettingService.getCache(userDefaultUserSetting.getId());
         if (trieWordParser == null) {
-            return loadWordLib(wordLibInfo);
+            WordLibInfo wordLibInfo = getById(userDefaultUserSetting.getWordLibId());
+            return loadParser(wordLibInfo, userDefaultUserSetting);
         } else {
             return trieWordParser;
         }
     }
 
-
     @Override
     public TypingTips typingTips(Long userId, String article) {
-        TrieWordParser trieWordParser = loadWordLib(userId);
+        TrieWordParser trieWordParser = loadParser(userId);
         SubscriptInstance[] subscriptInstances = trieWordParser.parse(article);
         String codes = trieWordParser.printCode(subscriptInstances);
         return new TypingTips(subscriptInstances, codes);
+    }
+
+
+    @Override
+    public IPage<WordLibListPageVO> getPageByUserId(IPage<WordLibListPageVO> iPage, Long userId) {
+        return baseMapper.getPageByUserId(iPage, userId);
     }
 
     public WordLibInfo selectOneByEntity(WordLibInfo wordLibInfo) {
@@ -125,11 +130,8 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
     }
 
     public WordLibInfo getUserDefaultWordLib(Long userId) {
-        TypingUser typeUserById = typingUserService.getTypeUserById(userId);
-        if (typeUserById.getWordLibId() == null) {
-            throw new LBRuntimeException(WordLibCode.NOT_SET_DEFAULT_WORD_LIB);
-        }
-        WordLibInfo wordLibInfo = getById(typeUserById.getWordLibId());
+        UserWordLibSetting userDefaultUserSetting = userWordLibSettingService.getUserDefaultUserSetting(userId);
+        WordLibInfo wordLibInfo = getById(userDefaultUserSetting.getWordLibId());
         if (wordLibInfo == null) {
             throw new LBRuntimeException(WordLibCode.NOT_FOUNT_DEFAULT_WORD_LIB);
         }
@@ -137,26 +139,45 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
     }
 
 
-    private TrieWordParser loadWordLib(WordLibInfo wordLibInfo) {
+    private TrieWordLib loadWordLib(WordLibInfo wordLibInfo) {
         log.info("加载词库信息：{}", wordLibInfo);
-        String duplicateSymbols = wordLibInfo.getDuplicateSymbols();
-        ReaderFactory readerFactory = new MinioReaderFactory(minio);
-        TrieWordLib symbol = new TrieWordLib(readerFactory, "symbol.txt");
-        TrieWordLib wordLib = new TrieWordLib(readerFactory, wordLibInfo.getWordLibPath(), duplicateSymbols, wordLibInfo.getCodeMaxLength(), wordLibInfo.getLeaderSymbols());
+        CodeConfig.CacheTrieWordLib wordLib;
+        CodeConfig.CacheTrieWordLib symbol;
+        symbol = wordLibCache.get(0L);
+        wordLib = wordLibCache.get(wordLibInfo.getId());
+        if (symbol == null) {
+            symbol = new CodeConfig.CacheTrieWordLib(0L, minioReaderFactory, "symbol.txt");
+            wordLibCache.put(0L, symbol);
+        }
+        if (wordLib == null) {
+            wordLib = new CodeConfig.CacheTrieWordLib(wordLibInfo.getId(), minioReaderFactory, wordLibInfo.getWordLibPath(), wordLibInfo.getDuplicateSymbols(), wordLibInfo.getCodeMaxLength(), wordLibInfo.getLeaderSymbols());
+            wordLibCache.put(wordLibInfo.getId(), wordLib);
+        }
 
         wordLibInfo.setWordCount(wordLib.getWordCount());
-        wordLibInfo.setWordMaxLength(wordLibInfo.getWordMaxLength());
+        wordLibInfo.setWordMaxLength(wordLib.getMaxWordLength());
 
         wordLib.merge(symbol);
+        return wordLib;
+    }
 
-        CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(wordLibInfo.getDuplicateSymbolWeight(), wordLibInfo.getWordLengthWeight(), wordLib.getFilterDuplicateSymbols());
-        compareFeelDeviationWeights.addKeyAllBoardPartition(Arrays.asList(wordLibInfo.getKeyBoardPartition().split("\\|")));
+    private TrieWordParser loadParser(WordLibInfo wordLibInfo, UserWordLibSetting userWordLibSetting) {
+        TrieWordParser trieWordParser = userWordLibSettingService.getCache(userWordLibSetting.getId());
+        if (trieWordParser != null) {
+            return trieWordParser;
+        }
 
-        MockTypeConvert mockTypeConvert = new MockTypeConvert(duplicateSymbols, wordLib.getDefaultUpSymbol());
+        TrieWordLib wordLib = loadWordLib(wordLibInfo);
+        CodeConfig.CacheTrieWordLib symbol = wordLibCache.get(0L);
 
-        TrieWordParser trieWordParser = new TrieWordParser(wordLib, symbol, mockTypeConvert, compareFeelDeviationWeights);
+        CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(userWordLibSetting.getDuplicateSymbolWeight(), userWordLibSetting.getWordLengthWeight(), wordLib.getFilterDuplicateSymbols());
+        compareFeelDeviationWeights.addKeyAllBoardPartition(Arrays.asList(userWordLibSetting.getKeyBoardPartition().split("\\|")));
+
+        MockTypeConvert mockTypeConvert = new MockTypeConvert(wordLibInfo.getDuplicateSymbols(), wordLib.getDefaultUpSymbol());
+
+        trieWordParser = new TrieWordParser(wordLib, symbol, mockTypeConvert, compareFeelDeviationWeights);
         log.info("加载词库{}成功", wordLibInfo.getId());
-        wordParserTimingMap.put(wordLibInfo.getId(), trieWordParser);
+        userWordLibSettingService.cache(wordLibInfo.getId(), trieWordParser);
         return trieWordParser;
     }
 }

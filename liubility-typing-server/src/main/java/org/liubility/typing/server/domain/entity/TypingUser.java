@@ -40,14 +40,12 @@ public class TypingUser extends Model<TypingUser> {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date lastLoginDate;
 
-    private Long wordLibId;
-
     @Override
     protected Serializable pkVal() {
         return id;
     }
 
-    public void incrNum(NumDto numDto){
+    public void incrNum(NumDto numDto) {
         num += numDto.getNum();
         rightNum += numDto.getRightNum();
         misNum += numDto.getMisNum();

@@ -93,7 +93,10 @@ public class WordLib {
                 String code = spliced[1];
                 code = checkDuplicate(code);
                 boolean add = dictPut(word, code);
-                if (add && maxWordLength < word.length()) {
+                if (add) {
+                    wordCount++;
+                }
+                if (maxWordLength < word.length()) {
                     maxWordLength = word.length();
                 }
             }
