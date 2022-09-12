@@ -3,7 +3,7 @@ package org.liubility.typing.server.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.typing.server.domain.entity.Article;
-import org.liubility.typing.server.exception.ArticleCode;
+import org.liubility.typing.server.enums.exception.ArticleCode;
 import org.liubility.typing.server.mappers.ArticleMapper;
 import org.liubility.typing.server.service.ArticleService;
 import org.liubility.commons.exception.LBRuntimeException;

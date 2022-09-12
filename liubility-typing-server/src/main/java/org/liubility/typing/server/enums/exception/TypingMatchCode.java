@@ -1,4 +1,4 @@
-package org.liubility.typing.server.exception;
+package org.liubility.typing.server.enums.exception;
 
 import lombok.Getter;
 import org.liubility.commons.http.response.normal.ICode;
@@ -9,9 +9,9 @@ import org.liubility.commons.http.response.normal.ICode;
  * @Description:
  */
 public enum TypingMatchCode implements ICode {
-    GET_AGAIN(60000L,"你今日已获取过赛文"),
-    UPLOAD_FAIL(60001L,"上传成绩失败"),
-    EXPIRED(60001L,"赛文已过期"),
+    GET_AGAIN(20400L,"你今日已获取过赛文"),
+    UPLOAD_FAIL(20401L,"上传成绩失败"),
+    EXPIRED(20402L,"赛文已过期"),
 
     ;
 

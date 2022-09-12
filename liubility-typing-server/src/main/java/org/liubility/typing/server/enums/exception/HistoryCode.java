@@ -1,15 +1,16 @@
-package org.liubility.typing.server.exception;
+package org.liubility.typing.server.enums.exception;
 
 import lombok.Getter;
 import org.liubility.commons.http.response.normal.ICode;
 
 /**
  * @Author: JDragon
- * @Data:2022/9/12 3:05
+ * @Data:2022/9/12 3:07
  * @Description:
  */
-public enum ArticleCode implements ICode {
-    NOT_EXIST_ARTICLE(40000L,"没有该文章")
+public enum HistoryCode implements ICode {
+    ABNORMAL_GRADES(20300L,"成绩出现异常"),
+    SAVE_ARTICLE_FAIL(20301L,"保存文档失败")
     ;
 
     @Getter
@@ -18,7 +19,7 @@ public enum ArticleCode implements ICode {
     @Getter
     private final String message;
 
-    ArticleCode(Long code, String message) {
+    HistoryCode(Long code, String message) {
         this.code = code;
         this.message = message;
     }

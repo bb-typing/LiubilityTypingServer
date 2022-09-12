@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.domain.entity.TypingHistory;
-import org.liubility.typing.server.exception.HistoryCode;
+import org.liubility.typing.server.enums.exception.HistoryCode;
 import org.liubility.typing.server.mappers.TypingHistoryMapper;
 import org.liubility.typing.server.mapstruct.ArticleMapStruct;
 import org.liubility.typing.server.mapstruct.TypeHistoryMapStruct;

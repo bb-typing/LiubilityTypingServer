@@ -15,7 +15,7 @@ import org.liubility.typing.server.code.reader.ReaderFactory;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
 import org.liubility.typing.server.domain.vo.TypingTips;
-import org.liubility.typing.server.exception.WordLibCode;
+import org.liubility.typing.server.enums.exception.WordLibCode;
 import org.liubility.typing.server.mappers.WordLibMapper;
 import org.liubility.typing.server.minio.BucketConstant;
 import org.liubility.typing.server.minio.Minio;

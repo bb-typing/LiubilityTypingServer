@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.commons.dto.account.NumDto;
 import org.liubility.commons.util.GenerateUtils;
 import org.liubility.typing.server.domain.entity.TypingUser;
-import org.liubility.typing.server.exception.UserTypingCode;
+import org.liubility.typing.server.enums.exception.UserTypingCode;
 import org.liubility.typing.server.mappers.TypingUserMapper;
 import org.liubility.typing.server.mapstruct.TypeUserMapStruct;
 import org.liubility.typing.server.service.TypingUserService;

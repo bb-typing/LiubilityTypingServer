@@ -1,4 +1,4 @@
-package org.liubility.typing.server.exception;
+package org.liubility.typing.server.enums.exception;
 
 import lombok.Getter;
 import org.liubility.commons.http.response.normal.ICode;
@@ -9,7 +9,7 @@ import org.liubility.commons.http.response.normal.ICode;
  * @Description:
  */
 public enum AccountCode implements ICode {
-    USER_EXIST(30000L,"该用户名已存在"),
+    USER_EXIST(20100L,"该用户名已存在"),
 
     ;
 

@@ -7,12 +7,11 @@ import org.liubility.commons.dto.account.AccountDto;
 import org.liubility.commons.exception.AuthException;
 import org.liubility.commons.exception.LBRuntimeException;
 import org.liubility.commons.jwt.JwtServiceImpl;
-import org.liubility.typing.server.exception.AccountCode;
+import org.liubility.typing.server.enums.exception.AccountCode;
 import org.liubility.typing.server.mappers.AccountMapper;
 import org.liubility.typing.server.domain.entity.Account;
 import org.liubility.typing.server.mapstruct.AccountMapStruct;
 import org.liubility.typing.server.service.AccountService;
-import org.liubility.typing.server.service.WordLibService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,17 +1,15 @@
-package org.liubility.typing.server.exception;
+package org.liubility.typing.server.enums.exception;
 
 import lombok.Getter;
 import org.liubility.commons.http.response.normal.ICode;
 
 /**
  * @Author: JDragon
- * @Data:2022/9/12 3:14
+ * @Data:2022/9/12 3:05
  * @Description:
  */
-public enum UserTypingCode implements ICode {
-    NOT_EXIST(70000L,"你还未申请跟打器账号"),
-    SECRET_ERROR(70000L,"密钥错误"),
-
+public enum ArticleCode implements ICode {
+    NOT_EXIST_ARTICLE(20200L,"没有该文章")
     ;
 
     @Getter
@@ -20,8 +18,10 @@ public enum UserTypingCode implements ICode {
     @Getter
     private final String message;
 
-    UserTypingCode(Long code, String message) {
+    ArticleCode(Long code, String message) {
         this.code = code;
         this.message = message;
     }
+
+
 }

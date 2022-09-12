@@ -1,4 +1,4 @@
-package org.liubility.typing.server.exception;
+package org.liubility.typing.server.enums.exception;
 
 import lombok.Getter;
 import org.liubility.commons.http.response.normal.ICode;
@@ -9,9 +9,9 @@ import org.liubility.commons.http.response.normal.ICode;
  * @Description:
  */
 public enum WordLibCode implements ICode {
-    UPLOAD_LIB_ERROR(80000L,"上传词库到对象存储异常"),
-    INSERT_ERROR(80001L,"插入词库异常"),
-    LOAD_LIB_ERROR(80002L,"加载词库异常"),
+    UPLOAD_LIB_ERROR(20600L,"上传词库到对象存储异常"),
+    INSERT_ERROR(20601L,"插入词库异常"),
+    LOAD_LIB_ERROR(20602L,"加载词库异常"),
     ;
 
     @Getter
