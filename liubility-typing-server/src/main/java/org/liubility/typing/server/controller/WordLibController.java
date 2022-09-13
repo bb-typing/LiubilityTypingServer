@@ -56,7 +56,7 @@ public class WordLibController extends BaseController {
     @DeleteMapping
     @ApiOperation("删除词库")
     public Result<String> deleteWordLib(@RequestParam Long wordLibId) {
-        wordLibService.deleteWordLib(wordLibId);
+        wordLibService.deleteWordLib(wordLibId, getUserId());
         return Result.success("删除成功");
     }
 

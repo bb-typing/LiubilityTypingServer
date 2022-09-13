@@ -118,8 +118,12 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
     }
 
     @Override
-    public void deleteWordLib(Long wordLibId) {
+    public void deleteWordLib(Long wordLibId, Long userId) {
         WordLibInfo wordLibInfo = getById(wordLibId);
+
+        if (!wordLibInfo.getUserId().equals(userId)) {
+            throw new LBRuntimeException(WordLibCode.NO_PERMISSION_DELETE);
+        }
 
         removeById(wordLibId);
 
