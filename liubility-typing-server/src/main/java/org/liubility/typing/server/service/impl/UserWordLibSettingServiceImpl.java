@@ -11,6 +11,7 @@ import org.liubility.typing.server.config.CodeConfig;
 import org.liubility.typing.server.domain.dto.UserWordLibSettingDTO;
 import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.vo.UserWordSettingListPageVO;
+import org.liubility.typing.server.enums.exception.UserWordLibSettingCode;
 import org.liubility.typing.server.enums.exception.WordLibCode;
 import org.liubility.typing.server.mappers.UserWordLibSettingMapper;
 import org.liubility.typing.server.mapstruct.UserWordLibSettingMapStruct;
@@ -99,5 +100,17 @@ public class UserWordLibSettingServiceImpl extends ServiceImpl<UserWordLibSettin
     @Override
     public void rmCache(Long userId) {
         wordParserCache.remove(userId);
+    }
+
+    @Override
+    public void deleteSetting(Long settingId, Long userId) {
+        UserWordLibSetting userWordLibSetting = getById(settingId);
+        if (userWordLibSetting == null) {
+            throw new LBRuntimeException(UserWordLibSettingCode.NOT_FOUNT_SETTING);
+        }
+        if (userWordLibSetting.getUserId().equals(userId)) {
+            rmCache(userWordLibSetting.getUserId());
+            userWordLibSetting.deleteById();
+        }
     }
 }

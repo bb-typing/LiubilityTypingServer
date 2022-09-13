@@ -117,6 +117,20 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         return baseMapper.getPageByUserId(iPage, userId);
     }
 
+    @Override
+    public void deleteWordLib(Long wordLibId) {
+        WordLibInfo wordLibInfo = getById(wordLibId);
+
+        removeById(wordLibId);
+
+        Integer count = baseMapper.countByOriginId(wordLibId);
+
+        if (count == 0) {
+            wordLibCache.remove(wordLibId);
+            minioService.delete(BucketConstant.WORD_LIB_BUCKET, wordLibInfo.getWordLibPath());
+        }
+    }
+
     public WordLibInfo selectOneByEntity(WordLibInfo wordLibInfo) {
         LambdaQueryWrapper<WordLibInfo> wordLibInfoLambdaQueryWrapper = new LambdaQueryWrapper<>(wordLibInfo);
         return getOne(wordLibInfoLambdaQueryWrapper);

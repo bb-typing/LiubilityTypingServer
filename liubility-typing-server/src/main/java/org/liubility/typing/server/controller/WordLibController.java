@@ -37,23 +37,30 @@ public class WordLibController extends BaseController {
         this.userWordLibSettingService = userWordLibSettingService;
     }
 
-    @PostMapping(value = "/uploadWordLib")
+    @PutMapping
     @ApiOperation("上传词库文件")
     public Result<String> uploadWordLib(WordLibDTO wordLibDTO) {
         wordLibService.uploadWordLib(getUserId(), wordLibDTO);
         return Result.success("上传成功");
     }
 
-    @GetMapping(value = "/page")
-    @ApiOperation("个人上传词库列表")
-    public Result<PageTable<WordLibListPageVO>> page() {
+    @GetMapping
+    @ApiOperation("上传词库列表")
+    public Result<PageTable<WordLibListPageVO>> wordLibPage() {
         IPage<WordLibListPageVO> page = wordLibService.getPageByUserId(new Page<>(getPageNum(), getPageSize()), getUserId());
         PageTable<WordLibListPageVO> table = TableFactory.buildPageTable(page, new TableRef<WordLibListPageVO>(page.getRecords()) {
         });
         return Result.success(table);
     }
 
-    @PostMapping(value = "/setting")
+    @DeleteMapping
+    @ApiOperation("删除词库")
+    public Result<String> deleteWordLib(@RequestParam Long wordLibId) {
+        wordLibService.deleteWordLib(wordLibId);
+        return Result.success("删除成功");
+    }
+
+    @PutMapping(value = "/setting")
     @ApiOperation("设置词库属性")
     public Result<String> setting(UserWordLibSettingDTO userWordLibSettingDTO) {
         userWordLibSettingDTO.setUserId(getUserId());
@@ -70,9 +77,14 @@ public class WordLibController extends BaseController {
         return Result.success(table);
     }
 
+    @DeleteMapping(value = "/setting")
+    @ApiOperation("删除词库配置")
+    public Result<String> deleteSetting(@RequestParam Long settingId) {
+        userWordLibSettingService.deleteSetting(settingId, getUserId());
+        return Result.success("删除成功");
+    }
 
-
-    @PostMapping(value = "/loadWordLib")
+    @PostMapping(value = "/load")
     @ApiOperation("用户加载云词提")
     public Result<String> loadWordLib() {
         wordLibService.loadParser(getUserId());

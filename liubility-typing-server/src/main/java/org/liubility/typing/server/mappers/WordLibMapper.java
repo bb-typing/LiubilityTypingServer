@@ -19,4 +19,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WordLibMapper extends BaseMapper<WordLibInfo> {
     Page<WordLibListPageVO> getPageByUserId(IPage<WordLibListPageVO> page, @Param("userId") Long userId);
+
+    Integer countByOriginId(@Param("originId") Long originId);
 }

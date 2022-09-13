@@ -12,4 +12,8 @@
         from word_lib_info wli
                  join base_account ba on ba.id = wli.user_id and ba.id = #{userId}
     </select>
+    
+    <select id="countByOriginId" resultType="int">
+        select count(0) from word_lib_info where origin_id=#{originId}
+    </select>
 </mapper>

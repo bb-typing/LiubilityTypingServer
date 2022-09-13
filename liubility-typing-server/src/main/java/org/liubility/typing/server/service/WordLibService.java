@@ -48,4 +48,6 @@ public interface WordLibService extends IService<WordLibInfo> {
      * @return 词库分页
      */
     IPage<WordLibListPageVO> getPageByUserId(IPage<WordLibListPageVO> iPage, Long userId);
+
+    void  deleteWordLib(Long wordLibId);
 }

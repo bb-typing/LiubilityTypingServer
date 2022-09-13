@@ -60,4 +60,12 @@ public interface UserWordLibSettingService extends IService<UserWordLibSetting> 
      * @param userId 用户id
      */
     void rmCache(Long userId);
+
+    /**
+     * 删除配置，删除之后会清理parser缓存
+     *
+     * @param settingId 配置id
+     * @param userId    用户id
+     */
+    void deleteSetting(Long settingId, Long userId);
 }

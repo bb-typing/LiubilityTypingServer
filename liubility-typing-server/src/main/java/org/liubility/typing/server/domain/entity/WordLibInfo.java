@@ -1,8 +1,6 @@
 package org.liubility.typing.server.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
@@ -22,6 +20,9 @@ public class WordLibInfo extends Model<WordLibInfo> {
 
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
+
+    @TableField(fill = FieldFill.INSERT)
+    private Long originId;
 
     private Long userId;
 
