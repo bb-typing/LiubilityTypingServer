@@ -13,6 +13,7 @@ import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.code.parse.TrieWordParser;
 import org.liubility.typing.server.code.reader.ReaderFactory;
 import org.liubility.typing.server.config.CodeConfig;
+import org.liubility.typing.server.domain.cond.QueryCommunityWordLibPageCond;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
 import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
@@ -25,6 +26,7 @@ import org.liubility.typing.server.minio.service.MinioServiceImpl;
 import org.liubility.typing.server.minio.service.OssFileInfoVO;
 import org.liubility.typing.server.service.UserWordLibSettingService;
 import org.liubility.typing.server.service.WordLibService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -133,6 +135,11 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
             wordLibCache.remove(wordLibId);
             minioService.delete(BucketConstant.WORD_LIB_BUCKET, wordLibInfo.getWordLibPath());
         }
+    }
+
+    @Override
+    public IPage<WordLibListPageVO> getCommunityWordLibPage(IPage<WordLibListPageVO> iPage, QueryCommunityWordLibPageCond cond) {
+        return baseMapper.getCommunityWordLibPage(iPage, cond);
     }
 
     public WordLibInfo selectOneByEntity(WordLibInfo wordLibInfo) {

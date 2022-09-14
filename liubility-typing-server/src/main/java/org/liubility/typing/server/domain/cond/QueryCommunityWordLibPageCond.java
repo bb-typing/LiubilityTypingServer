@@ -1,7 +1,8 @@
 package org.liubility.typing.server.domain.cond;
 
-import io.swagger.models.auth.In;
 import lombok.Data;
+import org.liubility.typing.server.enums.OrderTypeEnum;
+import org.liubility.typing.server.enums.WordLibOrderFieldEnum;
 
 /**
  * @Author: JDragon
@@ -12,10 +13,13 @@ import lombok.Data;
 @Data
 public class QueryCommunityWordLibPageCond {
 
+    private String name;
+
     private String author;
 
     private Integer maxCodeLength;
 
+    private WordLibOrderFieldEnum orderBy;
 
-
+    private OrderTypeEnum desc;
 }

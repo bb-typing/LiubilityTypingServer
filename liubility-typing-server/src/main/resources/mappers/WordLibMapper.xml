@@ -4,16 +4,50 @@
     <select id="getPageByUserId" resultType="org.liubility.typing.server.domain.vo.WordLibListPageVO">
         select wli.id,
                wli.user_id,
+               wli.word_lib_name,
                ba.username,
                wli.word_count,
                wli.word_max_length,
                wli.code_max_length,
-               wli.duplicate_symbols
+               wli.duplicate_symbols,
+               wli.create_time
         from word_lib_info wli
                  join base_account ba on ba.id = wli.user_id and ba.id = #{userId}
     </select>
-    
+
     <select id="countByOriginId" resultType="int">
-        select count(0) from word_lib_info where origin_id=#{originId}
+        select count(0)
+        from word_lib_info
+        where origin_id = #{originId}
+    </select>
+
+    <select id="getCommunityWordLibPage" resultType="org.liubility.typing.server.domain.vo.WordLibCommunityListPageVO">
+        select wli.id,
+               wli.user_id,
+               wli.word_lib_name,
+               ba.username,
+               wli.word_count,
+               wli.word_max_length,
+               wli.code_max_length,
+               wli.duplicate_symbols,
+               wli.share_time
+        from word_lib_info wli join base_account ba on ba.id = wli.user_id and wli.shareable = 1
+        <where>
+            <if test="cond.author != null and cond.author != ''">
+                and ba.username like concat('%', #{cond.author}, '%')
+            </if>
+            <if test="cond.maxCodeLength != null and cond.maxCodeLength != ''">
+                and wli.code_max_length = #{cond.maxCodeLength}
+            </if>
+            <if test="cond.name != null and cond.name != ''">
+                and wli.word_lib_name like concat('%', #{cond.name}, '%')
+            </if>
+        </where>
+        <if test="cond.orderBy != null">
+            order by ${cond.orderBy.getFieldName}
+            <if test="cond.desc != null">
+                ${cond.desc.getOrderType}
+            </if>
+        </if>
     </select>
 </mapper>

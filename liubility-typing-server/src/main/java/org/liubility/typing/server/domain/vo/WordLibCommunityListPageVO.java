@@ -11,7 +11,7 @@ import java.util.Date;
  * @Description:
  */
 @Data
-public class WordLibListPageVO {
+public class WordLibCommunityListPageVO {
 
     @TableHeader("词库ID")
     private Long id;
@@ -36,7 +36,6 @@ public class WordLibListPageVO {
     @TableHeader("选重符")
     private String duplicateSymbols;
 
-    @TableHeader("创建时间")
-    private Date createTime;
-
+    @TableHeader("分享时间")
+    private Date shareTime;
 }

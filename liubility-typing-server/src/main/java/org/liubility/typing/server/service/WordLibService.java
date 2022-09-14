@@ -3,6 +3,7 @@ package org.liubility.typing.server.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.liubility.typing.server.code.parse.TrieWordParser;
+import org.liubility.typing.server.domain.cond.QueryCommunityWordLibPageCond;
 import org.liubility.typing.server.domain.dto.WordLibDTO;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
 import org.liubility.typing.server.domain.vo.TypingTips;
@@ -56,4 +57,6 @@ public interface WordLibService extends IService<WordLibInfo> {
      * @param userId    用户id
      */
     void deleteWordLib(Long wordLibId, Long userId);
+
+    IPage<WordLibListPageVO> getCommunityWordLibPage(IPage<WordLibListPageVO> iPage, QueryCommunityWordLibPageCond cond);
 }
