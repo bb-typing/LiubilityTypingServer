@@ -1,6 +1,7 @@
 package org.liubility.typing.server.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +27,11 @@ import org.liubility.typing.server.minio.service.MinioServiceImpl;
 import org.liubility.typing.server.minio.service.OssFileInfoVO;
 import org.liubility.typing.server.service.UserWordLibSettingService;
 import org.liubility.typing.server.service.WordLibService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -142,6 +143,23 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         return baseMapper.getCommunityWordLibPage(iPage, cond);
     }
 
+    @Override
+    public void shareWordLib(Long wordLibId, Long userId, boolean share) {
+        WordLibInfo wordLibInfo = getById(wordLibId);
+        if (wordLibInfo == null) {
+            throw new LBRuntimeException(WordLibCode.NOT_FOUNT_WORD_LIB);
+        }
+        if (!wordLibInfo.getUserId().equals(userId)) {
+            throw new LBRuntimeException(WordLibCode.NO_PERMISSION_DELETE);
+        }
+
+        LambdaUpdateWrapper<WordLibInfo> libInfoLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        libInfoLambdaUpdateWrapper.eq(WordLibInfo::getId, wordLibId)
+                .set(WordLibInfo::getShareable, share)
+                .set(WordLibInfo::getShareTime, new Date());
+        update(libInfoLambdaUpdateWrapper);
+    }
+
     public WordLibInfo selectOneByEntity(WordLibInfo wordLibInfo) {
         LambdaQueryWrapper<WordLibInfo> wordLibInfoLambdaQueryWrapper = new LambdaQueryWrapper<>(wordLibInfo);
         return getOne(wordLibInfoLambdaQueryWrapper);
@@ -156,7 +174,7 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         UserWordLibSetting userDefaultUserSetting = userWordLibSettingService.getUserDefaultUserSetting(userId);
         WordLibInfo wordLibInfo = getById(userDefaultUserSetting.getWordLibId());
         if (wordLibInfo == null) {
-            throw new LBRuntimeException(WordLibCode.NOT_FOUNT_DEFAULT_WORD_LIB);
+            throw new LBRuntimeException(WordLibCode.NOT_FOUNT_WORD_LIB);
         }
         return wordLibInfo;
     }

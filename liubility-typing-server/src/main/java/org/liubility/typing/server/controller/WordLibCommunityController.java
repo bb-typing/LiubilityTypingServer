@@ -13,9 +13,7 @@ import org.liubility.typing.server.domain.cond.QueryCommunityWordLibPageCond;
 import org.liubility.typing.server.domain.vo.WordLibListPageVO;
 import org.liubility.typing.server.service.WordLibService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author: JDragon
@@ -38,6 +36,13 @@ public class WordLibCommunityController extends BaseController {
         PageTable<WordLibListPageVO> table = TableFactory.buildPageTable(page, new TableRef<WordLibListPageVO>(page.getRecords()) {
         });
         return Result.success(table);
+    }
+
+    @PostMapping("/share")
+    @ApiOperation("分享词库开关")
+    public Result<String> share(@RequestParam Long wordLibId, @RequestParam Boolean share) {
+        wordLibService.shareWordLib(wordLibId, getUserId(), share);
+        return Result.success("分享成功");
     }
 
 }

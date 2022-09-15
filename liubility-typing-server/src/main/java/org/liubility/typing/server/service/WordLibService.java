@@ -59,4 +59,6 @@ public interface WordLibService extends IService<WordLibInfo> {
     void deleteWordLib(Long wordLibId, Long userId);
 
     IPage<WordLibListPageVO> getCommunityWordLibPage(IPage<WordLibListPageVO> iPage, QueryCommunityWordLibPageCond cond);
+
+    void shareWordLib(Long wordLibId, Long userId, boolean share);
 }

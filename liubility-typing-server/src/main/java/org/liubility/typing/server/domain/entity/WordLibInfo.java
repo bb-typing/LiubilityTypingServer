@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
+import java.util.Date;
+
 /**
  * @Author: JDragon
  * @Data:2022/9/11 19:07
@@ -41,4 +43,10 @@ public class WordLibInfo extends Model<WordLibInfo> {
     private String leaderSymbols;
 
     private String duplicateSymbols;
+
+    private Boolean shareable;
+
+    private Date createTime;
+
+    private Date shareTime;
 }
