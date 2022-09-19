@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
+import org.liubility.typing.server.code.libs.EnglishTrieWordLib;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.code.parse.TrieWordParser;
@@ -47,12 +48,12 @@ public class Test {
                 .build();
         minio.init();
 
-//        ReaderFactory readerFactory = new MinioReaderFactory(minio);
-        ReaderFactory readerFactory = new FileReaderFactory();
+        ReaderFactory readerFactory = new MinioReaderFactory(minio);
 
         symbol = new TrieWordLib(readerFactory, "symbol.txt", "", 0, "");
-        wordLib = new TrieWordLib(readerFactory, "jin.txt", "23456789", 4, ";'");
-        wordLib.merge(symbol);
+//        wordLib = new TrieWordLib(readerFactory, "jb.txt", "23456789", 4, ";'");
+//        wordLib.merge(symbol);
+        wordLib = new EnglishTrieWordLib(readerFactory, "jb.txt");
 
         CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(0.5, 0.5, wordLib.getFilterDuplicateSymbols());
         compareFeelDeviationWeights.addKeyBoardPartition("1qaz");
@@ -66,27 +67,6 @@ public class Test {
         compareFeelDeviationWeights.addKeyBoardPartition("_");
 
         trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
-//
-//        Map<String, String> stringStringMap = wordLib.dictToMap();
-//        BufferedWriter writer = FileUtil.getWriter("jb.txt", StandardCharsets.UTF_8, false);
-//        for (Map.Entry<String, String> stringStringEntry : stringStringMap.entrySet()) {
-//            String key = stringStringEntry.getKey();
-//            String value = stringStringEntry.getValue();
-//            if (StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
-//                continue;
-//            }
-//            try {
-//                writer.write(key + "\t" + value);
-//                writer.newLine();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        try {
-//            writer.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public static void main(String[] args) {

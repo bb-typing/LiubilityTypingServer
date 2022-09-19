@@ -20,8 +20,8 @@ public class TrieWordLib extends WordLib {
 
     private TrieNode root;
 
-    public TrieWordLib(ReaderFactory readerFactory, String wordLibFilePath){
-        super(readerFactory,wordLibFilePath,"",0,"");
+    public TrieWordLib(ReaderFactory readerFactory, String wordLibFilePath) {
+        super(readerFactory, wordLibFilePath, "", 0, "");
     }
 
     public TrieWordLib(ReaderFactory readerFactory, String wordLibFilePath, String filterDuplicateSymbols, int codeMaxLength, String leader) {
@@ -36,7 +36,7 @@ public class TrieWordLib extends WordLib {
 
     @Override
     public boolean dictPut(String word, String code) {
-        List<String> wordChars = word.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
+        List<String> wordChars = splitWord(word);
         if (wordChars.size() == 0) {
             return true;
         }
@@ -61,13 +61,17 @@ public class TrieWordLib extends WordLib {
         return false;
     }
 
+    public List<String> splitWord(String word) {
+        return word.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
+    }
+
     @Override
     public String getCode(String word) {
         return Optional.ofNullable(getNode(word)).orElse(new TrieNode()).getCode();
     }
 
     public TrieNode getNode(String word) {
-        List<String> wordChars = word.chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.toList());
+        List<String> wordChars = splitWord(word);
         TrieNode lastNode = root;
         for (String wordChar : wordChars) {
             Map<String, TrieNode> children = lastNode.getChildren();

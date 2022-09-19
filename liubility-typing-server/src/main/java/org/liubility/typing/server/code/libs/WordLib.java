@@ -1,5 +1,7 @@
 package org.liubility.typing.server.code.libs;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.liubility.typing.server.code.reader.ReaderFactory;
@@ -72,6 +74,48 @@ public class WordLib {
         this.init();
     }
 
+    @Data
+    @AllArgsConstructor
+    public static class ProcessLineResult {
+
+        /**
+         * 是否需要继续处理
+         */
+        private boolean goOn;
+
+        /**
+         * 词与编码
+         */
+        private String[] spliced;
+
+        public ProcessLineResult(Boolean goOn) {
+            this.goOn = goOn;
+        }
+    }
+
+    /**
+     * 处理当前词库读取行
+     *
+     * @param wordLibLine 文件行
+     * @return 处理结果
+     */
+    public ProcessLineResult processLine(String wordLibLine) {
+        if (wordLibLine.startsWith("---")) {
+            return new ProcessLineResult(false);
+        }
+        if (wordLibLine.contains("#")) {
+            wordLibLine = wordLibLine.substring(0, wordLibLine.indexOf("#"));
+        }
+        String[] spliced = wordLibLine.split("\\s+");
+        if (spliced.length == 1) {
+            spliced = new String[]{spliced[0], "? "};
+        } else if (spliced.length != 2) {
+            return new ProcessLineResult(false);
+        }
+        spliced[1] = checkDuplicate(spliced[1]);
+        return new ProcessLineResult(true, spliced);
+    }
+
     /**
      * 修改后不需要生成码表
      * 提供按照词库重复编码的顺序来计算选重符号
@@ -80,24 +124,13 @@ public class WordLib {
         try (BufferedReader reader = readerFactory.getReader(getWordLibFilePath())) {
             String temp;
             while ((temp = reader.readLine()) != null) {
-                if (temp.startsWith("---")) {
+                ProcessLineResult processLineResult = processLine(temp);
+                if (!processLineResult.isGoOn()) {
                     continue;
                 }
-//                if (temp.contains("#")) {
-//                    temp = temp.substring(0, temp.indexOf("#"));
-//                }
-                String[] spliced = temp.split("\\t");
-                if (spliced.length == 1) {
-                    spliced = new String[]{spliced[0], "? "};
-                }
-                if (spliced.length != 2) {
-                    continue;
-                }
-                spliced[0] = spliced[0].trim();
-                spliced[1] = spliced[1].trim();
+                String[] spliced = processLineResult.getSpliced();
                 String word = spliced[0];
                 String code = spliced[1];
-                code = checkDuplicate(code);
                 boolean add = dictPut(word, code);
                 if (add) {
                     wordCount++;
