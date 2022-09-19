@@ -1,10 +1,13 @@
 package org.liubility.typing.server.code;
 
+import cn.hutool.core.io.FileUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.code.parse.TrieWordParser;
+import org.liubility.typing.server.code.reader.FileReaderFactory;
 import org.liubility.typing.server.code.reader.MinioReaderFactory;
 import org.liubility.typing.server.code.reader.ReaderFactory;
 import org.liubility.typing.server.compare.ArticleComparator;
@@ -12,7 +15,11 @@ import org.liubility.typing.server.compare.ComparisonItem;
 import org.liubility.typing.server.minio.Minio;
 import org.liubility.typing.server.minio.MinioProperties;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: JDragon
@@ -40,10 +47,11 @@ public class Test {
                 .build();
         minio.init();
 
-        ReaderFactory readerFactory = new MinioReaderFactory(minio);
+//        ReaderFactory readerFactory = new MinioReaderFactory(minio);
+        ReaderFactory readerFactory = new FileReaderFactory();
 
         symbol = new TrieWordLib(readerFactory, "symbol.txt", "", 0, "");
-        wordLib = new TrieWordLib(readerFactory, "wordlib.txt", "23456789", 4, ";'");
+        wordLib = new TrieWordLib(readerFactory, "jin.txt", "23456789", 4, ";'");
         wordLib.merge(symbol);
 
         CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(0.5, 0.5, wordLib.getFilterDuplicateSymbols());
@@ -58,6 +66,27 @@ public class Test {
         compareFeelDeviationWeights.addKeyBoardPartition("_");
 
         trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
+//
+//        Map<String, String> stringStringMap = wordLib.dictToMap();
+//        BufferedWriter writer = FileUtil.getWriter("jb.txt", StandardCharsets.UTF_8, false);
+//        for (Map.Entry<String, String> stringStringEntry : stringStringMap.entrySet()) {
+//            String key = stringStringEntry.getKey();
+//            String value = stringStringEntry.getValue();
+//            if (StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
+//                continue;
+//            }
+//            try {
+//                writer.write(key + "\t" + value);
+//                writer.newLine();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        try {
+//            writer.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static void main(String[] args) {
@@ -70,7 +99,8 @@ public class Test {
     }
 
     public static void testLib() {
-        SubscriptInstance[] parse = trieWordParser.parse("我很快地明白这一切。毕竟，这次体验让我更加认识自我。我的中心认同是自我而非工作，虽然后者也颇重要。哦，几乎忘了告诉你我的新工作，薪资比原来的还多。尽管经历了一段不算短的黑暗期，但最后的结果令我十分满意。");
+        String str = "shit";
+        SubscriptInstance[] parse = trieWordParser.parse(str);
         String s = trieWordParser.printCode(parse);
         System.out.println(s);
     }

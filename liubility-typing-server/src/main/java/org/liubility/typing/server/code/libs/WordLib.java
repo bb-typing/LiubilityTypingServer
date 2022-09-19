@@ -83,16 +83,18 @@ public class WordLib {
                 if (temp.startsWith("---")) {
                     continue;
                 }
-                if (temp.contains("#")) {
-                    temp = temp.substring(0, temp.indexOf("#"));
-                }
-                String[] spliced = temp.split("\\s+");
+//                if (temp.contains("#")) {
+//                    temp = temp.substring(0, temp.indexOf("#"));
+//                }
+                String[] spliced = temp.split("\\t");
                 if (spliced.length == 1) {
                     spliced = new String[]{spliced[0], "? "};
                 }
                 if (spliced.length != 2) {
                     continue;
                 }
+                spliced[0] = spliced[0].trim();
+                spliced[1] = spliced[1].trim();
                 String word = spliced[0];
                 String code = spliced[1];
                 code = checkDuplicate(code);
