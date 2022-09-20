@@ -66,6 +66,7 @@ public class SubscriptInstance {
         }
     }
 
+    @JsonIgnore
     public PreInfo getMinPre() {
         TreeMap<Integer, PreInfo> preInfoTreeMap = preInfoMap.get(weights);
         if (preInfoTreeMap == null || preInfoTreeMap.firstEntry() == null) {
