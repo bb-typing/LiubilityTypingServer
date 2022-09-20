@@ -20,47 +20,47 @@ public class EnglishTrieWordLib extends TrieWordLib {
         super(readerFactory, wordLibFilePath, "", 0, "");
     }
 
-    @Override
-    public TrieNode getNode(String word) {
-        return super.getNode(word.toLowerCase().trim());
-    }
-
-    @Override
-    public String getCode(String word) {
-        return super.getCode(word.toLowerCase().trim());
-    }
-
-    @Override
-    public List<String> splitWord(String word) {
-        return Arrays.stream(word.split("\\s+")).collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean dictPut(String word, String code) {
-        return super.dictPut(word.toLowerCase().trim(), code.toUpperCase().trim());
-    }
-
-    @Override
-    public Map<String, String> dictToMap(Map<String, String> map, String prefix, TrieNode currentNode) {
-        Map<String, TrieNode> children = currentNode.getChildren();
-        if (children == null) return map;
-        for (Map.Entry<String, TrieNode> entry : children.entrySet()) {
-            String key = entry.getKey();
-            TrieNode node = entry.getValue();
-            if (node.getCode() != null) {
-                map.put(prefix + " " + key, node.getCode());
-            }
-            dictToMap(map, prefix + " " + key, node);
-        }
-        return map;
-    }
+//    @Override
+//    public TrieNode getNode(String word) {
+//        return super.getNode(word);
+//    }
+//
+//    @Override
+//    public String getCode(String word) {
+//        return super.getCode(word);
+//    }
+//
+//    @Override
+//    public List<String> splitWord(String word) {
+//        return Arrays.stream(word.split("\\s+")).collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public boolean dictPut(String word, String code) {
+//        return super.dictPut(word, code.toUpperCase().trim());
+//    }
+//
+//    @Override
+//    public Map<String, String> dictToMap(Map<String, String> map, String prefix, TrieNode currentNode) {
+//        Map<String, TrieNode> children = currentNode.getChildren();
+//        if (children == null) return map;
+//        for (Map.Entry<String, TrieNode> entry : children.entrySet()) {
+//            String key = entry.getKey();
+//            TrieNode node = entry.getValue();
+//            if (node.getCode() != null) {
+//                map.put(prefix + " " + key, node.getCode());
+//            }
+//            dictToMap(map, prefix + " " + key, node);
+//        }
+//        return map;
+//    }
 
     @Override
     public ProcessLineResult processLine(String wordLibLine) {
         String[] spliced = wordLibLine.split("\\t");
         if (spliced.length == 1) {
             //英文速录未知词算一码
-            spliced = new String[]{spliced[0].toLowerCase().trim(), "?"};
+            spliced = new String[]{spliced[0], "?"};
         } else if (spliced.length != 2) {
             return new ProcessLineResult(false);
         }

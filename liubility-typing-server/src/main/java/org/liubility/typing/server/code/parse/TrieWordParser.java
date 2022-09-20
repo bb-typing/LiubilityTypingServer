@@ -1,5 +1,6 @@
 package org.liubility.typing.server.code.parse;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.liubility.typing.server.code.compare.CompareWeights;
 import org.liubility.typing.server.code.convert.WordTypeConvert;
@@ -17,12 +18,16 @@ import java.util.TreeMap;
 @Slf4j
 public class TrieWordParser {
 
+    @Getter
     private final TrieWordLib wordLib;
 
+    @Getter
     private final TrieWordLib symbolLib;
 
+    @Getter
     private final WordTypeConvert typeConvert;
 
+    @Getter
     private final CompareWeights compareWeights;
 
     public TrieWordParser(TrieWordLib wordLib, TrieWordLib symbolLib, WordTypeConvert typeConvert, CompareWeights compareWeights) {
@@ -55,7 +60,7 @@ public class TrieWordParser {
      * @param subscriptInstances 文章
      * @param cursor             计算下标
      */
-    private String deleteDefaultUpSymbol(String codeTemp, SubscriptInstance[] subscriptInstances, Integer cursor) {
+    protected String deleteDefaultUpSymbol(String codeTemp, SubscriptInstance[] subscriptInstances, Integer cursor) {
         int maxIndex = subscriptInstances.length - 1;
         //codeTemp最后一位是否为上屏符 &&
         //codeTemp后一位是否是顶屏符号 &&
@@ -77,7 +82,7 @@ public class TrieWordParser {
      * 判断该下标字符是否在单字码表中，如果无，则判断是否为数组或字母，是则直接设置codeTemp为字符自身
      * 构造函数创建实例。详见SubscriptInstance构造方法
      */
-    private SubscriptInstance[] createSubscriptInstance(String article) {
+    protected SubscriptInstance[] createSubscriptInstance(String article) {
         SubscriptInstance[] subscriptInstances = new SubscriptInstance[article.length()];
         int articleLength = article.length();
         String codeTemp, strTemp;
@@ -107,7 +112,7 @@ public class TrieWordParser {
     /**
      * 正向遍历进行词语填充与计算码长
      */
-    private void fillInWords(SubscriptInstance[] subscriptInstances) {
+    protected void fillInWords(SubscriptInstance[] subscriptInstances) {
         String codeTemp, strTemp;
         int articleLength = subscriptInstances.length;
         for (int index = 0; index < articleLength; index++) {
@@ -135,7 +140,7 @@ public class TrieWordParser {
     /**
      * 逆向进行dp计算最短编码。
      */
-    private void reverseDp(SubscriptInstance[] subscriptInstances) {
+    protected void reverseDp(SubscriptInstance[] subscriptInstances) {
         /*
           结束了所有增加上一跳操作后，从后往前跳（因为最后一格为最短编码，一直往上一跳绝对为最短路径）
 

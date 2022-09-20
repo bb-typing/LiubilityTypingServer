@@ -79,7 +79,7 @@ public class Test {
     }
 
     public static void testLib() {
-        String str = "shit";
+        String str = "I stand on the edge of the dance floor watching couples glide, spin, and groove as they dance the West Coast Swing. The tempo of the music is fast, but the beating of my heart is faster. I want to dance, but I'm afraid I'm not good enough.";
         SubscriptInstance[] parse = trieWordParser.parse(str);
         String s = trieWordParser.printCode(parse);
         System.out.println(s);
