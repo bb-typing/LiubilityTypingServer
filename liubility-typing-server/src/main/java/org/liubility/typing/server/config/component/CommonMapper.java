@@ -1,4 +1,4 @@
-package org.liubility.typing.server.service;
+package org.liubility.typing.server.config.component;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

@@ -1,6 +1,7 @@
 package org.liubility.typing.server.service;
 
 import com.alibaba.fastjson.JSONObject;
+import org.liubility.typing.server.config.component.CommonService;
 import org.liubility.typing.server.domain.entity.TypingSetting;
 import org.liubility.typing.server.enums.TypingSettingTypeEnum;
 

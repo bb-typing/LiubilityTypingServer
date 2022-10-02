@@ -1,4 +1,4 @@
-package org.liubility.typing.server.service;
+package org.liubility.typing.server.config.component;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 

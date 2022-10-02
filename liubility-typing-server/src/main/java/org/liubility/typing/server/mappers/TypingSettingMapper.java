@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.liubility.typing.server.domain.entity.TypingSetting;
-import org.liubility.typing.server.service.CommonMapper;
 import org.springframework.stereotype.Repository;
 
 /**
