@@ -5,14 +5,11 @@ import org.liubility.commons.http.response.normal.ICode;
 
 /**
  * @Author: JDragon
- * @Data:2022/9/13 0:39
+ * @Data:2022/9/12 3:05
  * @Description:
  */
-public enum UserWordLibSettingCode implements ICode {
-    /**
-     * 找不到配置异常
-     */
-    NOT_FOUNT_SETTING(20700L,"找不到该配置"),
+public enum Code202Article implements ICode {
+    NOT_EXIST_ARTICLE(20200L,"没有该文章")
     ;
 
     @Getter
@@ -21,8 +18,10 @@ public enum UserWordLibSettingCode implements ICode {
     @Getter
     private final String message;
 
-    UserWordLibSettingCode(Long code, String message) {
+    Code202Article(Long code, String message) {
         this.code = code;
         this.message = message;
     }
+
+
 }

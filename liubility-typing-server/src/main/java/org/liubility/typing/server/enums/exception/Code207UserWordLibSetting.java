@@ -5,13 +5,14 @@ import org.liubility.commons.http.response.normal.ICode;
 
 /**
  * @Author: JDragon
- * @Data:2022/9/12 3:14
+ * @Data:2022/9/13 0:39
  * @Description:
  */
-public enum UserTypingCode implements ICode {
-    NOT_EXIST(20500L,"你还未申请跟打器账号"),
-    SECRET_ERROR(20501L,"密钥错误"),
-
+public enum Code207UserWordLibSetting implements ICode {
+    /**
+     * 找不到配置异常
+     */
+    NOT_FOUNT_SETTING(20700L,"找不到该配置"),
     ;
 
     @Getter
@@ -20,7 +21,7 @@ public enum UserTypingCode implements ICode {
     @Getter
     private final String message;
 
-    UserTypingCode(Long code, String message) {
+    Code207UserWordLibSetting(Long code, String message) {
         this.code = code;
         this.message = message;
     }

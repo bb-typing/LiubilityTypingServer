@@ -20,7 +20,7 @@ import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.entity.WordLibInfo;
 import org.liubility.typing.server.domain.vo.TypingTips;
 import org.liubility.typing.server.domain.vo.WordLibListPageVO;
-import org.liubility.typing.server.enums.exception.WordLibCode;
+import org.liubility.typing.server.enums.exception.Code206WordLib;
 import org.liubility.typing.server.mappers.WordLibMapper;
 import org.liubility.typing.server.minio.BucketConstant;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
@@ -65,7 +65,7 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
             upload = minioService.upload(wordLibDTO.getFile(), BucketConstant.WORD_LIB_BUCKET);
         } catch (Exception e) {
             log.error("上传词库到对象存储异常", e);
-            throw new LBRuntimeException(WordLibCode.UPLOAD_LIB_ERROR, e);
+            throw new LBRuntimeException(Code206WordLib.UPLOAD_LIB_ERROR, e);
         }
         WordLibInfo wordLibInfo = WordLibInfo.builder()
                 .userId(userId)
@@ -82,7 +82,7 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
             log.error("加载词库异常", e);
             //回滚
             minioService.delete(upload.getBucket(), upload.getFilePath());
-            throw new LBRuntimeException(WordLibCode.LOAD_LIB_ERROR, e);
+            throw new LBRuntimeException(Code206WordLib.LOAD_LIB_ERROR, e);
         }
         try {
             wordLibInfo.insert();
@@ -90,7 +90,7 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
             log.error("插入词库异常", e);
             //回滚
             minioService.delete(upload.getBucket(), upload.getFilePath());
-            throw new LBRuntimeException(WordLibCode.INSERT_ERROR, e);
+            throw new LBRuntimeException(Code206WordLib.INSERT_ERROR, e);
         }
     }
 
@@ -125,7 +125,7 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         WordLibInfo wordLibInfo = getById(wordLibId);
 
         if (!wordLibInfo.getUserId().equals(userId)) {
-            throw new LBRuntimeException(WordLibCode.NO_PERMISSION_DELETE);
+            throw new LBRuntimeException(Code206WordLib.NO_PERMISSION_DELETE);
         }
 
         removeById(wordLibId);
@@ -147,10 +147,10 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
     public void shareWordLib(Long wordLibId, Long userId, boolean share) {
         WordLibInfo wordLibInfo = getById(wordLibId);
         if (wordLibInfo == null) {
-            throw new LBRuntimeException(WordLibCode.NOT_FOUNT_WORD_LIB);
+            throw new LBRuntimeException(Code206WordLib.NOT_FOUNT_WORD_LIB);
         }
         if (!wordLibInfo.getUserId().equals(userId)) {
-            throw new LBRuntimeException(WordLibCode.NO_PERMISSION_DELETE);
+            throw new LBRuntimeException(Code206WordLib.NO_PERMISSION_DELETE);
         }
 
         LambdaUpdateWrapper<WordLibInfo> libInfoLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
@@ -174,7 +174,7 @@ public class WordLibServiceImpl extends ServiceImpl<WordLibMapper, WordLibInfo> 
         UserWordLibSetting userDefaultUserSetting = userWordLibSettingService.getUserDefaultUserSetting(userId);
         WordLibInfo wordLibInfo = getById(userDefaultUserSetting.getWordLibId());
         if (wordLibInfo == null) {
-            throw new LBRuntimeException(WordLibCode.NOT_FOUNT_WORD_LIB);
+            throw new LBRuntimeException(Code206WordLib.NOT_FOUNT_WORD_LIB);
         }
         return wordLibInfo;
     }

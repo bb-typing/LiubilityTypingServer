@@ -2,7 +2,6 @@ package org.liubility.typing.server.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.liubility.commons.exception.LBException;
 import org.liubility.commons.exception.LBRuntimeException;
 import org.liubility.commons.http.response.table.PageTable;
 import org.liubility.commons.http.response.table.TableFactory;
@@ -14,7 +13,7 @@ import org.liubility.typing.server.domain.entity.TypingHistory;
 import org.liubility.typing.server.domain.entity.TypingMatch;
 import org.liubility.typing.server.domain.vo.TypingHistoryVO;
 import org.liubility.typing.server.domain.vo.TypingMatchVO;
-import org.liubility.typing.server.enums.exception.TypingMatchCode;
+import org.liubility.typing.server.enums.exception.Code204TypingMatch;
 import org.liubility.typing.server.mappers.ArticleMapper;
 import org.liubility.typing.server.mappers.TypingHistoryMapper;
 import org.liubility.typing.server.mappers.TypingMatchMapper;
@@ -51,7 +50,7 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
     public TypingMatchVO getTodayMatch(Long userId, Boolean mobile) {
         TypingHistory typingMatchHistory = typingHistoryMapper.getTypingMatchHistory(userId, mobile, DateUtil.today());
         if (typingMatchHistory != null) {
-            throw new LBRuntimeException(TypingMatchCode.GET_AGAIN);
+            throw new LBRuntimeException(Code204TypingMatch.GET_AGAIN);
         }
 
         insertTodayMatch();
@@ -97,10 +96,10 @@ public class TypingMatchServiceImpl extends ServiceImpl<TypingMatchMapper, Typin
                 OPEN_TLJ_MATCH_USER_LIST.remove(userId);
                 return "上传成功";
             } else {
-                throw new LBRuntimeException(TypingMatchCode.UPLOAD_FAIL);
+                throw new LBRuntimeException(Code204TypingMatch.UPLOAD_FAIL);
             }
         } else {
-            throw new LBRuntimeException(TypingMatchCode.EXPIRED);
+            throw new LBRuntimeException(Code204TypingMatch.EXPIRED);
         }
     }
 

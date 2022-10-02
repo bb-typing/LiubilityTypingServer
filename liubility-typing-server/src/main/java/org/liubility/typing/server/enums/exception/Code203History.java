@@ -8,7 +8,7 @@ import org.liubility.commons.http.response.normal.ICode;
  * @Data:2022/9/12 3:07
  * @Description:
  */
-public enum HistoryCode implements ICode {
+public enum Code203History implements ICode {
     ABNORMAL_GRADES(20300L,"成绩出现异常"),
     SAVE_ARTICLE_FAIL(20301L,"保存文档失败")
     ;
@@ -19,7 +19,7 @@ public enum HistoryCode implements ICode {
     @Getter
     private final String message;
 
-    HistoryCode(Long code, String message) {
+    Code203History(Long code, String message) {
         this.code = code;
         this.message = message;
     }

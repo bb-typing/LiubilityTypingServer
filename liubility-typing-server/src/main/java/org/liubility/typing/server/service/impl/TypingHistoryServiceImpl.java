@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.domain.entity.TypingHistory;
-import org.liubility.typing.server.enums.exception.HistoryCode;
+import org.liubility.typing.server.enums.exception.Code203History;
 import org.liubility.typing.server.mappers.TypingHistoryMapper;
 import org.liubility.typing.server.mapstruct.ArticleMapStruct;
 import org.liubility.typing.server.mapstruct.TypeHistoryMapStruct;
@@ -14,7 +14,6 @@ import org.liubility.typing.server.service.TypingHistoryService;
 import org.liubility.commons.dto.account.HistoryArticleDto;
 import org.liubility.commons.dto.account.TypeHistoryDto;
 import org.liubility.commons.exception.LBRuntimeException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -53,7 +52,7 @@ public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, T
         Article article = articleMapStruct.toEntity(historyArticleDto.getArticleDto());
 
         if (typingHistory.getTime() < 0) {
-            throw new LBRuntimeException(HistoryCode.ABNORMAL_GRADES);
+            throw new LBRuntimeException(Code203History.ABNORMAL_GRADES);
         }
 
         Article oldArticle = articleService.getArticle(article);
@@ -61,7 +60,7 @@ public class TypingHistoryServiceImpl extends ServiceImpl<TypingHistoryMapper, T
             if (article.insert()) {
                 oldArticle = article;
             } else {
-                throw new LBRuntimeException(HistoryCode.SAVE_ARTICLE_FAIL);
+                throw new LBRuntimeException(Code203History.SAVE_ARTICLE_FAIL);
             }
         }
 

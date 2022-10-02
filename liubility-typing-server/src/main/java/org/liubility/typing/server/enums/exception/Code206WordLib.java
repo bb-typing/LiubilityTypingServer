@@ -8,7 +8,7 @@ import org.liubility.commons.http.response.normal.ICode;
  * @Data:2022/9/12 3:16
  * @Description:
  */
-public enum WordLibCode implements ICode {
+public enum Code206WordLib implements ICode {
     UPLOAD_LIB_ERROR(20600L, "上传词库到对象存储异常"),
     INSERT_ERROR(20601L, "插入词库异常"),
     LOAD_LIB_ERROR(20602L, "加载词库异常"),
@@ -23,7 +23,7 @@ public enum WordLibCode implements ICode {
     @Getter
     private final String message;
 
-    WordLibCode(Long code, String message) {
+    Code206WordLib(Long code, String message) {
         this.code = code;
         this.message = message;
     }

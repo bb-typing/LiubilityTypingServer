@@ -7,12 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.liubility.commons.exception.LBRuntimeException;
 import org.liubility.commons.util.TimingMap;
 import org.liubility.typing.server.code.parse.TrieWordParser;
-import org.liubility.typing.server.config.CodeConfig;
 import org.liubility.typing.server.domain.dto.UserWordLibSettingDTO;
 import org.liubility.typing.server.domain.entity.UserWordLibSetting;
 import org.liubility.typing.server.domain.vo.UserWordSettingListPageVO;
-import org.liubility.typing.server.enums.exception.UserWordLibSettingCode;
-import org.liubility.typing.server.enums.exception.WordLibCode;
+import org.liubility.typing.server.enums.exception.Code207UserWordLibSetting;
+import org.liubility.typing.server.enums.exception.Code206WordLib;
 import org.liubility.typing.server.mappers.UserWordLibSettingMapper;
 import org.liubility.typing.server.mapstruct.UserWordLibSettingMapStruct;
 import org.liubility.typing.server.service.UserWordLibSettingService;
@@ -53,7 +52,7 @@ public class UserWordLibSettingServiceImpl extends ServiceImpl<UserWordLibSettin
     public UserWordLibSetting getUserDefaultUserSetting(Long userId) {
         UserWordLibSetting userWordLibSetting = getUserDefaultUserSettingNoCheck(userId);
         if (userWordLibSetting == null) {
-            throw new LBRuntimeException(WordLibCode.NOT_SET_DEFAULT_WORD_LIB);
+            throw new LBRuntimeException(Code206WordLib.NOT_SET_DEFAULT_WORD_LIB);
         }
         return userWordLibSetting;
     }
@@ -106,7 +105,7 @@ public class UserWordLibSettingServiceImpl extends ServiceImpl<UserWordLibSettin
     public void deleteSetting(Long settingId, Long userId) {
         UserWordLibSetting userWordLibSetting = getById(settingId);
         if (userWordLibSetting == null) {
-            throw new LBRuntimeException(UserWordLibSettingCode.NOT_FOUNT_SETTING);
+            throw new LBRuntimeException(Code207UserWordLibSetting.NOT_FOUNT_SETTING);
         }
         if (userWordLibSetting.getUserId().equals(userId)) {
             rmCache(userWordLibSetting.getUserId());

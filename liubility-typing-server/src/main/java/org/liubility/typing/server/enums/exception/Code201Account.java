@@ -5,11 +5,12 @@ import org.liubility.commons.http.response.normal.ICode;
 
 /**
  * @Author: JDragon
- * @Data:2022/9/12 3:05
+ * @Data:2022/9/12 3:00
  * @Description:
  */
-public enum ArticleCode implements ICode {
-    NOT_EXIST_ARTICLE(20200L,"没有该文章")
+public enum Code201Account implements ICode {
+    USER_EXIST(20100L,"该用户名已存在"),
+
     ;
 
     @Getter
@@ -18,7 +19,7 @@ public enum ArticleCode implements ICode {
     @Getter
     private final String message;
 
-    ArticleCode(Long code, String message) {
+    Code201Account(Long code, String message) {
         this.code = code;
         this.message = message;
     }
