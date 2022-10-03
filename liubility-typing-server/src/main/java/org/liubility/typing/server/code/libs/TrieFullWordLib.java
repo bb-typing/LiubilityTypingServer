@@ -26,6 +26,36 @@ public class TrieFullWordLib extends TrieWordLib {
         return new TrieNode();
     }
 
+    @Override
+    public boolean dictPut(String word, String code) {
+        List<String> wordChars = splitWord(word);
+        if (wordChars.size() == 0) {
+            return true;
+        }
+        TrieWordLib.TrieNode node = getNode(word);
+        if (node == null) {
+            node = root;
+            for (String wordChar : wordChars) {
+                if (node.getChildren() == null) {
+                    node.setChildren(new HashMap<>());
+                }
+                Map<String, TrieWordLib.TrieNode> children = node.getChildren();
+                node = children.computeIfAbsent(wordChar, (e) -> createNode());
+            }
+            node.setCode(code);
+            return true;
+        } else if (node.getCode() == null) {
+            node.setCode(code);
+            return true;
+        } else if (node.getCode().replaceAll(getDefaultUpSymbol(), "").length() > code.replaceAll(getDefaultUpSymbol(), "").length()) {
+            ((TrieNode) node).setFirstCode(code);
+        } else {
+            node.setCode(code);
+            return true;
+        }
+        return false;
+    }
+
     @EqualsAndHashCode(callSuper = true)
     @Data
     public static class TrieNode extends TrieWordLib.TrieNode {
@@ -49,17 +79,20 @@ public class TrieFullWordLib extends TrieWordLib {
             }
             int i = 0;
             int length = code.length();
-            Iterator<String> iterator = codes.iterator();
-            while (iterator.hasNext()) {
-                String item = iterator.next();
-                if (length >= item.length()) {
+            for (String item : codes) {
+                if (length <= item.length()) {
                     break;
                 }
-                if (iterator.hasNext()) {
-                    i++;
-                }
+                i++;
             }
             codes.add(i, code);
+        }
+
+        public void setFirstCode(String code) {
+            if (codes == null) {
+                codes = new LinkedList<>();
+            }
+            codes.add(0, code);
         }
     }
 }

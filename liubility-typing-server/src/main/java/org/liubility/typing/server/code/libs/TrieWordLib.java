@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TrieWordLib extends WordLib {
 
-    private TrieNode root;
+    protected TrieNode root;
 
     public TrieWordLib(ReaderFactory readerFactory, String wordLibFilePath) {
         super(readerFactory, wordLibFilePath, "", 0, "");
