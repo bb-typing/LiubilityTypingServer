@@ -15,11 +15,11 @@ public class SubscriptInstance {
 
     private String word;
 
-    private String wordCode;
+    private List<String> wordCode;
 
     private String words;
 
-    private String wordsCode;
+    private List<String> wordsCode;
 
     private String type;
 
@@ -55,10 +55,17 @@ public class SubscriptInstance {
         //同长度不同上跳表，用于动态词提
         private Integer pre;
         private String type;
-        private String wordsCode;//最短编码路径的编码
+        private List<String> wordsCode;//最短编码路径的编码
         private String words;//最短编码路径的词条
 
         PreInfo(int pre, String words, String wordsCode, String type) {
+            this.pre = pre;
+            this.type = type;
+            this.words = words;
+            this.wordsCode = Collections.singletonList(wordsCode);
+        }
+
+        PreInfo(int pre, String words, List<String> wordsCode, String type) {
             this.pre = pre;
             this.type = type;
             this.words = words;
@@ -75,10 +82,10 @@ public class SubscriptInstance {
         return preInfoTreeMap.firstEntry().getValue();
     }
 
-    public SubscriptInstance(int i) {
+    private SubscriptInstance(int i) {
         next = i;
         preInfoMap = new TreeMap<>();
-        wordCode = "";
+        wordCode = null;
         word = "";
         useSign = false;
         useWordSign = false;
@@ -90,6 +97,14 @@ public class SubscriptInstance {
 
     public SubscriptInstance(int i, String word, String wordCode) {
         this(i);
+        this.wordCode = Collections.singletonList(wordCode);
+        this.word = word;
+        this.words = word;
+        this.wordsCode = Collections.singletonList(wordCode);
+    }
+
+    public SubscriptInstance(int i, String word, List<String> wordCode) {
+        this(i);
         this.wordCode = wordCode;
         this.word = word;
         this.words = word;
@@ -97,11 +112,21 @@ public class SubscriptInstance {
     }
 
     public void addPre(double length, int pre, String words, String wordsCode, String type) {
+        TreeMap<Integer, PreInfo> map = this.initPre(length);
+        map.put(pre, new PreInfo(pre, words, wordsCode, type));
+    }
+
+    public void addPre(double length, int pre, String words, List<String> wordsCode, String type) {
+        TreeMap<Integer, PreInfo> map = this.initPre(length);
+        map.put(pre, new PreInfo(pre, words, wordsCode, type));
+    }
+
+    private TreeMap<Integer, PreInfo> initPre(double length) {
         TreeMap<Integer, PreInfo> map = preInfoMap.get(length);
         if (map == null) {
             map = new TreeMap<>();
             this.preInfoMap.put(length, map);
         }
-        map.put(pre, new PreInfo(pre, words, wordsCode, type));
+        return map;
     }
 }

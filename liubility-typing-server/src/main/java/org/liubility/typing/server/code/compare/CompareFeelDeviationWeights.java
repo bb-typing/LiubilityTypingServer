@@ -53,7 +53,7 @@ public class CompareFeelDeviationWeights extends CompareWeights {
             preWeights = preSubscriptInstance.getWeights();
             preCodeLength = preSubscriptInstance.getCodeLengthTemp();
             preFeelDeviation = preSubscriptInstance.getFeelDeviation();
-            preWordsCode = preSubscriptInstance.getWordsCode();
+            preWordsCode = preSubscriptInstance.getWordsCode().get(0);
         }
 
         //word

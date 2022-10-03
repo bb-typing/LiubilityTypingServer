@@ -30,8 +30,12 @@ public class TrieWordLib extends WordLib {
 
     @Override
     public void init() {
-        this.root = new TrieNode();
+        this.root = createNode();
         super.init();
+    }
+
+    public TrieNode createNode() {
+        return new TrieNode();
     }
 
     @Override
@@ -48,7 +52,7 @@ public class TrieWordLib extends WordLib {
                     node.setChildren(new HashMap<>());
                 }
                 Map<String, TrieNode> children = node.getChildren();
-                node = children.computeIfAbsent(wordChar, (e) -> new TrieNode());
+                node = children.computeIfAbsent(wordChar, (e) -> createNode());
             }
             node.setCode(code);
             return true;
@@ -67,7 +71,12 @@ public class TrieWordLib extends WordLib {
 
     @Override
     public String getCode(String word) {
-        return Optional.ofNullable(getNode(word)).orElse(new TrieNode()).getCode();
+        return Optional.ofNullable(getNode(word)).orElse(createNode()).getCode();
+    }
+
+    @Override
+    public Map<String, String> dictToMap() {
+        return dictToMap(new HashMap<>(), "", root);
     }
 
     public TrieNode getNode(String word) {
@@ -84,11 +93,6 @@ public class TrieWordLib extends WordLib {
             }
         }
         return lastNode;
-    }
-
-    @Override
-    public Map<String, String> dictToMap() {
-        return dictToMap(new HashMap<>(), "", root);
     }
 
     public Map<String, String> dictToMap(Map<String, String> map, String prefix, TrieNode currentNode) {

@@ -19,16 +19,16 @@ import java.util.TreeMap;
 public class TrieWordParser {
 
     @Getter
-    private final TrieWordLib wordLib;
+    protected final TrieWordLib wordLib;
 
     @Getter
-    private final TrieWordLib symbolLib;
+    protected final TrieWordLib symbolLib;
 
     @Getter
-    private final WordTypeConvert typeConvert;
+    protected final WordTypeConvert typeConvert;
 
     @Getter
-    private final CompareWeights compareWeights;
+    protected final CompareWeights compareWeights;
 
     public TrieWordParser(TrieWordLib wordLib, TrieWordLib symbolLib, WordTypeConvert typeConvert, CompareWeights compareWeights) {
         this.wordLib = wordLib;
@@ -113,27 +113,31 @@ public class TrieWordParser {
      * 正向遍历进行词语填充与计算码长
      */
     protected void fillInWords(SubscriptInstance[] subscriptInstances) {
-        String codeTemp, strTemp;
+        String words;
         int articleLength = subscriptInstances.length;
         for (int index = 0; index < articleLength; index++) {
             int articleMaxIndex = articleLength - 1;
             //判断每个长度是否有词
             int cursor = index;
-            strTemp = subscriptInstances[index].getWord();
-            TrieWordLib.TrieNode node = wordLib.getNode(strTemp);
+            words = subscriptInstances[index].getWord();
+            TrieWordLib.TrieNode node = wordLib.getNode(words);
             //词库中有以该字开头的词语，并且剩余文章字数大于等于2
             while (node != null && node.getChildren() != null && ++cursor <= articleMaxIndex) {
                 String currentWord = subscriptInstances[cursor].getWord();
-                strTemp += currentWord;
+                words += currentWord;
                 node = node.getChildren().get(currentWord);
-                if (node != null && node.getCode() != null) {
-                    codeTemp = deleteDefaultUpSymbol(node.getCode(), subscriptInstances, cursor);
-                    double nextWeights = compareWeights.compare(subscriptInstances, cursor, index - 1, strTemp, codeTemp);
-                    //添加该下标可打的所有词为上一跳权重
-                    subscriptInstances[cursor].addPre(nextWeights, index, strTemp, codeTemp, typeConvert.convert(codeTemp));
-                }
+                this.addPre(subscriptInstances, index, cursor, node, words);
             }
-            compareWeights.compare(subscriptInstances, index, index - 1, subscriptInstances[index].getWord(), subscriptInstances[index].getWordCode());
+            compareWeights.compare(subscriptInstances, index, index - 1, subscriptInstances[index].getWord(), subscriptInstances[index].getWordCode().get(0));
+        }
+    }
+
+    protected void addPre(SubscriptInstance[] subscriptInstances, int preIndex, int cursor, TrieWordLib.TrieNode node, String words) {
+        if (node != null && node.getCode() != null) {
+            String codeTemp = deleteDefaultUpSymbol(node.getCode(), subscriptInstances, cursor);
+            double nextWeights = compareWeights.compare(subscriptInstances, cursor, preIndex - 1, words, codeTemp);
+            //添加该下标可打的所有词为上一跳权重
+            subscriptInstances[cursor].addPre(nextWeights, preIndex, words, codeTemp, typeConvert.convert(codeTemp));
         }
     }
 
@@ -197,9 +201,9 @@ public class TrieWordParser {
         for (int i = 0; i < subscriptInstances.length; i++) {
             SubscriptInstance subscriptInstance = subscriptInstances[i];
             if (subscriptInstance.getNext() == i) {
-                stringBuilder.append(subscriptInstance.getWordCode());
+                stringBuilder.append(subscriptInstance.getWordCode().get(0));
             } else {
-                stringBuilder.append(subscriptInstance.getWordsCode());
+                stringBuilder.append(subscriptInstance.getWordsCode().get(0));
             }
             i = subscriptInstance.getNext();
         }

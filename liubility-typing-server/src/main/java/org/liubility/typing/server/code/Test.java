@@ -5,8 +5,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.EnglishTrieWordLib;
+import org.liubility.typing.server.code.libs.TrieFullWordLib;
 import org.liubility.typing.server.code.libs.TrieWordLib;
 import org.liubility.typing.server.code.parse.SubscriptInstance;
+import org.liubility.typing.server.code.parse.TrieFullWordParser;
 import org.liubility.typing.server.code.parse.TrieWordParser;
 import org.liubility.typing.server.code.reader.FileReaderFactory;
 import org.liubility.typing.server.code.reader.MinioReaderFactory;
@@ -53,7 +55,9 @@ public class Test {
         symbol = new TrieWordLib(readerFactory, "symbol.txt", "", 0, "");
 //        wordLib = new TrieWordLib(readerFactory, "jb.txt", "23456789", 4, ";'");
 //        wordLib.merge(symbol);
-        wordLib = new EnglishTrieWordLib(readerFactory, "jb.txt");
+//        wordLib = new EnglishTrieWordLib(readerFactory, "jb.txt");
+        wordLib = new TrieFullWordLib(readerFactory, "wordlib.txt", "23456789", 4, ";'");
+        wordLib.merge(symbol);
 
         CompareFeelDeviationWeights compareFeelDeviationWeights = new CompareFeelDeviationWeights(0.5, 0.5, wordLib.getFilterDuplicateSymbols());
         compareFeelDeviationWeights.addKeyBoardPartition("1qaz");
@@ -66,7 +70,7 @@ public class Test {
         compareFeelDeviationWeights.addKeyBoardPartition("0p;/'");
         compareFeelDeviationWeights.addKeyBoardPartition("_");
 
-        trieWordParser = new TrieWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
+        trieWordParser = new TrieFullWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
     }
 
     public static void main(String[] args) {
@@ -79,7 +83,8 @@ public class Test {
     }
 
     public static void testLib() {
-        String str = "I stand on the edge of the dance floor watching couples glide, spin, and groove as they dance the West Coast Swing. The tempo of the music is fast, but the beating of my heart is faster. I want to dance, but I'm afraid I'm not good enough.";
+//        String str = "I stand on the edge of the dance floor watching couples glide, spin, and groove as they dance the West Coast Swing. The tempo of the music is fast, but the beating of my heart is faster. I want to dance, but I'm afraid I'm not good enough.";
+        String str = "main函数内，调用算法类的入口吗";
         SubscriptInstance[] parse = trieWordParser.parse(str);
         String s = trieWordParser.printCode(parse);
         System.out.println(s);
