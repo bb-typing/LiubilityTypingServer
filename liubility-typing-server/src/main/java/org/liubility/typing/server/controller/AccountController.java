@@ -40,6 +40,7 @@ public class AccountController extends BaseController {
     @PostMapping("/login")
     @ApiOperation("登录")
     public Result<String> login(@RequestBody AccountDto accountDto) {
+        accountDto.setIp(getIP());
         return Result.success(accountService.login(accountDto));
     }
 

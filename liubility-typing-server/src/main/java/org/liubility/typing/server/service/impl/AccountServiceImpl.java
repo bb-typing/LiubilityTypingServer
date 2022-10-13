@@ -3,6 +3,7 @@ package org.liubility.typing.server.service.impl;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.liubility.commons.dto.account.AccountDto;
 import org.liubility.commons.exception.AuthException;
 import org.liubility.commons.exception.LBRuntimeException;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
  * @Email 1061917196@qq.com
  * @Des:
  */
-
+@Slf4j
 @Service
 public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> implements AccountService {
 
@@ -43,6 +44,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     @Override
     public String login(AccountDto accountDto) {
+        log.info("登录用户{}，ip:{}", accountDto.getUsername(), accountDto.getIp());
         String password = SecureUtil.md5(accountDto.getPassword());
         AccountDto loginAccountByName = getAccountByName(accountDto.getUsername());
         if (loginAccountByName == null) {
@@ -51,7 +53,7 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         if (!loginAccountByName.getPassword().equals(password)) {
             throw new AuthException("密码错误");
         }
-
+        loginAccountByName.setIp(accountDto.getIp());
         return jwtService.generateToken(loginAccountByName);
     }
 
