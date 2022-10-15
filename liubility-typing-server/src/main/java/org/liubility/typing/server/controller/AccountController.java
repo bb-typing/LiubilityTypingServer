@@ -66,7 +66,7 @@ public class AccountController extends BaseController {
     @PostMapping("/setting/{type}")
     @ApiOperation("更新用户配置")
     public Result<JSONObject> updateSetting(@PathVariable("type") TypingSettingTypeEnum type,
-                                            @RequestParam(required = false) String content) {
+                                            @RequestBody String content) {
         typingSettingService.setTypingSetting(type, getUserId(), content);
         return Result.success();
     }
