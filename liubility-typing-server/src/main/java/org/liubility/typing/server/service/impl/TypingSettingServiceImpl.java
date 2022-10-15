@@ -34,10 +34,7 @@ public class TypingSettingServiceImpl extends ServiceImpl<TypingSettingMapper, T
     }
 
     @Override
-    public void setTypingSetting(TypingSettingTypeEnum typingSettingTypeEnum, Long userId, String content) {
-        if (!JSONUtil.isJson(content)) {
-            throw new LBRuntimeException(Code208TypingSetting.VALID_JSON_FAIL);
-        }
+    public void setTypingSetting(TypingSettingTypeEnum typingSettingTypeEnum, Long userId, JSONObject content) {
         TypingSetting byUserId = getByUserId(userId);
         if (byUserId == null) {
             TypingSetting typingSetting = new TypingSetting();
@@ -45,7 +42,7 @@ public class TypingSettingServiceImpl extends ServiceImpl<TypingSettingMapper, T
             typingSetting.setUserId(userId);
             typingSetting.insert();
         } else {
-            baseMapper.updateUserTypingSettingByType(typingSettingTypeEnum.name(), userId, content);
+            baseMapper.updateUserTypingSettingByType(typingSettingTypeEnum.name(), userId, content.toJSONString());
         }
     }
 }

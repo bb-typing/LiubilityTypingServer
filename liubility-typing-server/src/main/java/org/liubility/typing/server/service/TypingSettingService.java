@@ -14,5 +14,5 @@ public interface TypingSettingService extends CommonService<TypingSetting> {
 
     JSONObject getTypingSetting(TypingSettingTypeEnum typingSettingTypeEnum, Long userId);
 
-    void setTypingSetting(TypingSettingTypeEnum typingSettingTypeEnum, Long userId, String content);
+    void setTypingSetting(TypingSettingTypeEnum typingSettingTypeEnum, Long userId, JSONObject content);
 }
