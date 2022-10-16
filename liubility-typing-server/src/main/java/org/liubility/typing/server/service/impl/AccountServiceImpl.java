@@ -13,6 +13,7 @@ import org.liubility.typing.server.mappers.AccountMapper;
 import org.liubility.typing.server.domain.entity.Account;
 import org.liubility.typing.server.mapstruct.AccountMapStruct;
 import org.liubility.typing.server.service.AccountService;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,9 +30,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     private final AccountMapStruct accountMapStruct;
 
-    public AccountServiceImpl(JwtServiceImpl jwtService, AccountMapStruct accountMapStruct) {
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    public AccountServiceImpl(JwtServiceImpl jwtService, AccountMapStruct accountMapStruct, RedisTemplate<String, Object> redisTemplate) {
         this.jwtService = jwtService;
         this.accountMapStruct = accountMapStruct;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -54,7 +58,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
             throw new AuthException("密码错误");
         }
         loginAccountByName.setIp(accountDto.getIp());
-        return jwtService.generateToken(loginAccountByName);
+        String token = jwtService.generateToken(loginAccountByName);
+        redisTemplate.opsForSet().add("lb:allow-ips:" + loginAccountByName.getId(), accountDto.getIp());
+        redisTemplate.opsForValue().set("lb:token:" + loginAccountByName.getId(), token);
+        return token;
     }
 
     @Override
