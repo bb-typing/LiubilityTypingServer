@@ -14,6 +14,7 @@ import org.liubility.typing.server.domain.entity.Account;
 import org.liubility.typing.server.mapstruct.AccountMapStruct;
 import org.liubility.typing.server.service.AccountService;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,12 +31,12 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
 
     private final AccountMapStruct accountMapStruct;
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
-    public AccountServiceImpl(JwtServiceImpl jwtService, AccountMapStruct accountMapStruct, RedisTemplate<String, Object> redisTemplate) {
+    public AccountServiceImpl(JwtServiceImpl jwtService, AccountMapStruct accountMapStruct, StringRedisTemplate stringRedisTemplate) {
         this.jwtService = jwtService;
         this.accountMapStruct = accountMapStruct;
-        this.redisTemplate = redisTemplate;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override
@@ -59,8 +60,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
         }
         loginAccountByName.setIp(accountDto.getIp());
         String token = jwtService.generateToken(loginAccountByName);
-        redisTemplate.opsForSet().add("lb:allow-ips:" + loginAccountByName.getId(), accountDto.getIp());
-        redisTemplate.opsForValue().set("lb:token:" + loginAccountByName.getId(), token);
+        stringRedisTemplate.opsForSet().add("lb:allow-ips:" + loginAccountByName.getId(), accountDto.getIp());
+        stringRedisTemplate.opsForValue().set("lb:token:" + loginAccountByName.getId(), token);
         return token;
     }
 
