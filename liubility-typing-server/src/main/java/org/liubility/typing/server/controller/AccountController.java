@@ -50,6 +50,12 @@ public class AccountController extends BaseController {
         return Result.success(accountService.register(accountDto));
     }
 
+    @PostMapping(value = "/checkToken")
+    @ApiOperation(value = "什么用都没有的接口")
+    public Result<String> checkToken() {
+        return Result.success();
+    }
+
     @PostMapping("/refreshToken")
     @ApiOperation("刷新令牌")
     public Result<String> refreshToken() {
