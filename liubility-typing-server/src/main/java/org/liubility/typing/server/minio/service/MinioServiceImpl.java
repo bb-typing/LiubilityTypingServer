@@ -6,18 +6,25 @@ import io.minio.StatObjectResponse;
 import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
 import org.liubility.commons.exception.LBRuntimeException;
+import org.liubility.commons.json.JsonUtils;
+import org.liubility.commons.util.FileUtils;
 import org.liubility.typing.server.minio.Minio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @Author: JDragon
@@ -46,6 +53,20 @@ public class MinioServiceImpl {
             throw new LBRuntimeException("上传文件到对象存储失败", e);
         }
         return getFileInfo(bucketName, objectName);
+    }
+
+    public OssFileInfoVO upload(Object o, String bucketName, String fileName) throws LBRuntimeException {
+        try {
+            String s = JsonUtils.object2Str(o);
+            minio.putObject(bucketName, fileName, new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)));
+        } catch (IOException e) {
+            log.error("上传文件获取流失败", e);
+            throw new LBRuntimeException("上传文件获取流失败", e);
+        } catch (XmlParserException | ServerException | NoSuchAlgorithmException | InsufficientDataException | InvalidKeyException | InvalidResponseException | ErrorResponseException | InternalException e) {
+            log.error("上传文件到对象存储失败", e);
+            throw new LBRuntimeException("上传文件到对象存储失败", e);
+        }
+        return getFileInfo(bucketName, fileName);
     }
 
     public OssFileInfoVO getFileInfo(String bucketName, String objectName) {
