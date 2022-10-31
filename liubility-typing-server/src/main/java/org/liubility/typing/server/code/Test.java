@@ -1,7 +1,13 @@
 package org.liubility.typing.server.code;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import io.minio.errors.*;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.C;
+import org.liubility.typing.server.code.compare.CompareCodeLengthWeights;
 import org.liubility.typing.server.code.compare.CompareFeelDeviationWeights;
 import org.liubility.typing.server.code.convert.MockTypeConvert;
 import org.liubility.typing.server.code.libs.EnglishTrieWordLib;
@@ -19,8 +25,12 @@ import org.liubility.typing.server.minio.Minio;
 import org.liubility.typing.server.minio.MinioProperties;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -37,19 +47,22 @@ public class Test {
 
     public static final TrieWordParser trieWordParser;
 
+    public static final Minio minio;
+
     static {
         MinioProperties minioProperties = new MinioProperties();
         minioProperties.setHost("192.168.1.150");
         minioProperties.setPort(9000);
         minioProperties.setAccessKey("minioadmin");
         minioProperties.setSecretKey("minioadmin");
-        Minio minio = Minio.builder()
+        minio = Minio.builder()
                 .endpoint("http://" + minioProperties.getHost() + ":" + minioProperties.getPort())
                 .accessKey(minioProperties.getAccessKey())
                 .secretKey(minioProperties.getSecretKey())
                 .build();
         minio.init();
 
+        long start = System.currentTimeMillis();
         ReaderFactory readerFactory = new MinioReaderFactory(minio);
 
         symbol = new TrieWordLib(readerFactory, "symbol.txt", "", 0, "");
@@ -70,11 +83,25 @@ public class Test {
         compareFeelDeviationWeights.addKeyBoardPartition("0p;/'");
         compareFeelDeviationWeights.addKeyBoardPartition("_");
 
+        CompareCodeLengthWeights compareCodeLengthWeights = new CompareCodeLengthWeights();
+
         trieWordParser = new TrieFullWordParser(wordLib, symbol, new MockTypeConvert("23456789", wordLib.getDefaultUpSymbol()), compareFeelDeviationWeights);
+        long end = System.currentTimeMillis();
+        System.out.println("词库初始化耗时:" + DateUtil.formatBetween(end - start));
     }
 
-    public static void main(String[] args) {
-        testLib();
+    public static void main(String[] args) throws Exception {
+        long start = System.currentTimeMillis();
+        String text = getTestText("苏菲的世界.txt");
+        long end = System.currentTimeMillis();
+        System.out.println("加载文章耗时:" + DateUtil.formatBetween(end - start));
+        testLib(text);
+        System.exit(0);
+    }
+
+    public static String getTestText(String file) throws Exception {
+        InputStream inputStream = minio.getObject("test", file);
+        return IoUtil.readUtf8(inputStream);
     }
 
     public static void testCompare() {
@@ -82,11 +109,10 @@ public class Test {
         System.out.println(comparisonItemList);
     }
 
-    public static void testLib() {
-//        String str = "I stand on the edge of the dance floor watching couples glide, spin, and groove as they dance the West Coast Swing. The tempo of the music is fast, but the beating of my heart is faster. I want to dance, but I'm afraid I'm not good enough.";
-        String str = "main函数内，调用算法类的入口吗";
-        SubscriptInstance[] parse = trieWordParser.parse(str);
-        String s = trieWordParser.printCode(parse);
-        System.out.println(s);
+    public static void testLib(String text) {
+        long start = System.currentTimeMillis();
+        SubscriptInstance[] parse = trieWordParser.parse(text);
+        long end = System.currentTimeMillis();
+        System.out.println("解析词提耗时:" + DateUtil.formatBetween(end - start));
     }
 }
