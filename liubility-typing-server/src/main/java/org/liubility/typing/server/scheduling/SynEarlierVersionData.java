@@ -93,15 +93,15 @@ public class SynEarlierVersionData extends ToggleScheduler {
 
         Connection connection = getConnection();
 
-        convert(connection, Account.class, accountService::saveBatch);
+        convert(connection, Account.class, accountService::saveOrUpdateBatch);
 
-        convert(connection, TypingUser.class, typingUserService::saveBatch);
+        convert(connection, TypingUser.class, typingUserService::saveOrUpdateBatch);
 
-        convert(connection, TypingHistory.class, typingHistoryService::saveBatch);
+        convert(connection, TypingHistory.class, typingHistoryService::saveOrUpdateBatch);
 
 //        convert(connection, TypingMatch.class, typingMatchService::saveBatch);
 
-        convert(connection, Article.class, articleService::saveBatch);
+        convert(connection, Article.class, articleService::saveOrUpdateBatch);
 
         closeResource(connection);
 
