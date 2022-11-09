@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Author: JDragon
@@ -57,40 +58,22 @@ public class TypingWordsDetailHandler {
             return;
         }
         List<TypedWordsDTO.Words> typeWords = typedWordsDTO.getTypeWords();
-        int count = 0;
-        int codeRight = 0;
-        int wordRight = 0;
-        int wordWrong = 0;
-        int codeWrong = 0;
-        int perfect = 0;
         Map<String, TypeStatusCount> map = new HashMap<>();
         for (TypedWordsDTO.Words typeWord : typeWords) {
-            WordsDetailStatus wordsStatus = this.getWordsStatus(typeWord);
-            count++;
-            if (wordsStatus.codeRight()) {
-                codeRight++;
-            } else {
-                codeWrong++;
-            }
-            if (wordsStatus.wordRight()) {
-                wordRight++;
-            } else {
-                wordWrong++;
-            }
-            if (wordsStatus.perfect()) {
-                perfect++;
-            }
-            String words = typeWord.mergeWords();
-            TypeStatusCount typeStatusCount = map.computeIfAbsent(words, e -> new TypeStatusCount());
-            typeStatusCount.incr(count, codeRight, wordRight, wordWrong, codeWrong, perfect);
+            TypeStatusCount typeStatusCount = map.computeIfAbsent(typeWord.mergeWords(), e -> new TypeStatusCount());
+            typeStatusCount.incr(this.getWordsStatus(typeWord));
         }
 
         minioService.upload(typedWordsDTO, "type-word",
                 FileUtils.processingPaths(String.valueOf(userId), new SimpleDateFormat("yyyy-MM-dd").format(history.getTypeDate()), String.valueOf(historyId)));
 
+        List<TypeStatusCountMongo> oldTypeStatusCountMongoList = typeStatusCountRepository.findTypeStatusCountByUserIdAndWordIn(userId, map.keySet());
+        Map<String, TypeStatusCountMongo> oldTypeStatusCountMongoMap = oldTypeStatusCountMongoList.stream()
+                .collect(Collectors.toMap(TypeStatusCountMongo::getWord, typeStatusCountMongo -> typeStatusCountMongo));
+
         List<TypeStatusCountMongo> statusCountMongoList = new LinkedList<>();
         for (Map.Entry<String, TypeStatusCount> entry : map.entrySet()) {
-            TypeStatusCountMongo oldTypeStatusCountMongo = typeStatusCountRepository.findTypeStatusCountByUserIdAndWord(userId, entry.getKey());
+            TypeStatusCountMongo oldTypeStatusCountMongo = oldTypeStatusCountMongoMap.get(entry.getKey());
             TypeStatusCount typeStatusCount = entry.getValue();
             if (oldTypeStatusCountMongo == null) {
                 oldTypeStatusCountMongo = BeanUtil.copyProperties(typeStatusCount, TypeStatusCountMongo.class);
@@ -175,6 +158,23 @@ public class TypingWordsDetailHandler {
         private int wordWrong;
 
         private int perfect;
+
+        public void incr(WordsDetailStatus wordsStatus) {
+            count++;
+            if (wordsStatus.codeRight()) {
+                codeRight++;
+            } else {
+                codeWrong++;
+            }
+            if (wordsStatus.wordRight()) {
+                wordRight++;
+            } else {
+                wordWrong++;
+            }
+            if (wordsStatus.perfect()) {
+                perfect++;
+            }
+        }
 
         public void incr(int count, int codeRight, int wordRight, int codeWrong, int wordWrong, int perfect) {
             this.count += count;

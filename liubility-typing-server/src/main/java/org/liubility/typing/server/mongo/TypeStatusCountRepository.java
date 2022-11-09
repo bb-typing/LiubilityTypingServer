@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: JDragon
@@ -19,6 +20,6 @@ public interface TypeStatusCountRepository extends MongoRepository<TypeStatusCou
             "{ '$limit': ?2 }"})
     List<TypeStatusCountMongo> findTypeStatusByUserIdDescTopNLimitN(Long userId, Integer codeRight, Integer limit);
 
-    TypeStatusCountMongo findTypeStatusCountByUserIdAndWord(Long userId, String word);
+    List<TypeStatusCountMongo> findTypeStatusCountByUserIdAndWordIn(Long userId, Set<String> word);
 
 }
