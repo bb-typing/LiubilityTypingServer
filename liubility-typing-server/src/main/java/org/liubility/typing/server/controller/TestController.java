@@ -8,6 +8,8 @@ import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.compare.ArticleComparator;
 import org.liubility.typing.server.compare.ComparisonItem;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
+import org.liubility.typing.server.mongo.TypeStatusCountMongo;
+import org.liubility.typing.server.mongo.TypeStatusImpl;
 import org.liubility.typing.server.scheduling.SynEarlierVersionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -90,5 +92,17 @@ public class TestController {
         private String typed;
 
         private boolean ignoreSymbols;
+    }
+
+
+    @Autowired
+    private TypeStatusImpl typeStatus;
+
+    @PostMapping(value = "/mongoTest")
+    @ApiOperation("mongo测试")
+    public Result<List<TypeStatusCountMongo>> uploadWordLib(@RequestParam Long userId,
+                                                            @RequestParam Integer codeRight,
+                                                            @RequestParam Integer limit) {
+        return Result.success(typeStatus.test(userId, codeRight, limit));
     }
 }

@@ -43,6 +43,9 @@ spring:
       shutdown-timeout: 100ms
     password:
     port: 9736
+  data:
+    mongodb:
+      uri: mongodb://root:example@192.168.1.150:27017/bb-typing?socketKeepAlive=true&heartbeatFrequency=1000&maxConnectionIdleTime=600000
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
@@ -72,3 +75,8 @@ cl-db:
   user: ${CL_DB_USER}
   password: ${CL_DB_PSW}
   syn-open: true
+
+
+logging:
+  level:
+    org.springframework.data.mongodb.core=DEBUG:

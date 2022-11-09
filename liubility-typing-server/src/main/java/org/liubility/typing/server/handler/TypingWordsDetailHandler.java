@@ -1,5 +1,6 @@
 package org.liubility.typing.server.handler;
 
+import cn.hutool.core.bean.BeanUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,16 +10,15 @@ import org.liubility.typing.server.domain.entity.TypingHistory;
 import org.liubility.typing.server.enums.TypingWordsTypeEnum;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
 import org.liubility.typing.server.minio.service.OssFileInfoVO;
+import org.liubility.typing.server.mongo.TypeStatusCountMongo;
+import org.liubility.typing.server.mongo.TypeStatusCountRepository;
 import org.liubility.typing.server.service.TypingHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: JDragon
@@ -46,6 +46,9 @@ public class TypingWordsDetailHandler {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private TypeStatusCountRepository typeStatusCountRepository;
 
     public void saveTypingWordsDetail(TypedWordsDTO typedWordsDTO, Long userId) {
         Long historyId = typedWordsDTO.getHistoryId();
@@ -81,18 +84,26 @@ public class TypingWordsDetailHandler {
             TypeStatusCount typeStatusCount = map.computeIfAbsent(words, e -> new TypeStatusCount());
             typeStatusCount.incr(count, codeRight, wordRight, wordWrong, codeWrong, perfect);
         }
+
         minioService.upload(typedWordsDTO, "type-word",
                 FileUtils.processingPaths(String.valueOf(userId), new SimpleDateFormat("yyyy-MM-dd").format(history.getTypeDate()), String.valueOf(historyId)));
+
+        List<TypeStatusCountMongo> statusCountMongoList = new LinkedList<>();
         for (Map.Entry<String, TypeStatusCount> entry : map.entrySet()) {
-            String key = entry.getKey();
-            String redisKey = "type-word:" + userId;
-            TypeStatusCount typeStatusCount = (TypeStatusCount) redisTemplate.opsForHash().get(redisKey, key);
-            if (typeStatusCount == null) {
-                typeStatusCount = new TypeStatusCount();
+            TypeStatusCountMongo oldTypeStatusCountMongo = typeStatusCountRepository.findTypeStatusCountByUserIdAndWord(userId, entry.getKey());
+            TypeStatusCount typeStatusCount = entry.getValue();
+            if (oldTypeStatusCountMongo == null) {
+                oldTypeStatusCountMongo = BeanUtil.copyProperties(typeStatusCount, TypeStatusCountMongo.class);
+            } else {
+                TypeStatusCount oldTypeStatusCount = BeanUtil.copyProperties(oldTypeStatusCountMongo, TypeStatusCount.class);
+                oldTypeStatusCount.incr(typeStatusCount);
+                BeanUtil.copyProperties(oldTypeStatusCount, oldTypeStatusCountMongo);
             }
-            typeStatusCount.incr(entry.getValue());
-            redisTemplate.opsForHash().put(redisKey, key, typeStatusCount);
+            oldTypeStatusCountMongo.setUserId(userId);
+            oldTypeStatusCountMongo.setWord(entry.getKey());
+            statusCountMongoList.add(oldTypeStatusCountMongo);
         }
+        typeStatusCountRepository.saveAll(statusCountMongoList);
     }
 
     public WordsDetailStatus getWordsStatus(TypedWordsDTO.Words typeWord) {
