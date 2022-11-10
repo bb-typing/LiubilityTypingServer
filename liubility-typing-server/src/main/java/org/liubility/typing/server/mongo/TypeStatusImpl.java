@@ -1,5 +1,6 @@
 package org.liubility.typing.server.mongo;
 
+import org.liubility.typing.server.mongo.entity.TypeStatusCountMongo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -2,6 +2,7 @@ package org.liubility.typing.server.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ import java.util.List;
  * @Description:
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TypedWordsDTO {
 
     private Long historyId;
@@ -19,51 +22,5 @@ public class TypedWordsDTO {
 
     private String typeCodes;
 
-    @Data
-    @AllArgsConstructor
-    public static class Words {
 
-        private String wordTips;
-
-        private String codeTips;
-
-        private List<TypeChar> wordsChar;
-
-        private List<TypeChar> codesChar;
-
-        private Long typingTime;
-
-        public String mergeWords() {
-            return mergeTypeChars(wordsChar);
-        }
-
-        public String mergeCodes() {
-            return mergeTypeChars(codesChar);
-        }
-
-        private String mergeTypeChars(List<TypeChar> typeChars) {
-            if (typeChars == null || typeChars.isEmpty()) {
-                return "";
-            }
-            StringBuilder stringBuilder = new StringBuilder();
-            typeChars.stream().filter(typeChar -> typeChar.getDeleteTime() == null)
-                    .map(TypeChar::getCharacter)
-                    .forEach(stringBuilder::append);
-            return stringBuilder.toString();
-        }
-    }
-
-
-    @Data
-    @AllArgsConstructor
-    public static class TypeChar {
-
-        private Character character;
-
-        private Long typingTime;
-
-        private Long deleteTime;
-
-        private Boolean mistake;
-    }
 }

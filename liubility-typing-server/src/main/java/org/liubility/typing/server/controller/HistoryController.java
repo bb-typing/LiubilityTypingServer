@@ -6,6 +6,8 @@ import org.liubility.commons.controller.BaseController;
 import org.liubility.typing.server.domain.dto.TypedWordsDTO;
 import org.liubility.typing.server.domain.entity.Article;
 import org.liubility.typing.server.handler.TypingWordsDetailHandler;
+import org.liubility.typing.server.mongo.TypeWordsRepository;
+import org.liubility.typing.server.mongo.entity.TypedWordsMongo;
 import org.liubility.typing.server.service.TypingHistoryService;
 import org.liubility.commons.dto.account.HistoryArticleDto;
 import org.liubility.commons.http.response.normal.Result;
@@ -38,10 +40,16 @@ public class HistoryController extends BaseController {
     }
 
     @PostMapping("/uploadTypingDetail")
-    @ApiOperation("上传历史记录(带文章修正解决文章过长不能上传)")
+    @ApiOperation("上传跟打详情")
     public Result<String> uploadTypingDetail(@RequestBody TypedWordsDTO typedWordsDTO) {
         typingWordsDetailHandler.saveTypingWordsDetail(typedWordsDTO, getUserId());
         return Result.success();
+    }
+
+    @PostMapping(value = "/getTypingDetail")
+    @ApiOperation("根据跟打历史id获取跟打详情")
+    public Result<TypedWordsDTO> getTypedWords(@RequestParam Long historyId) {
+        return Result.success(typingWordsDetailHandler.getTypingWordsDetail(historyId, getUserId()));
     }
 
 }

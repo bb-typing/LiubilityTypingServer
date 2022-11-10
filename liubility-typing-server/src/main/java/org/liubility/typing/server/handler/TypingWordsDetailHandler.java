@@ -4,14 +4,20 @@ import cn.hutool.core.bean.BeanUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.liubility.commons.exception.LBRuntimeException;
 import org.liubility.commons.util.FileUtils;
+import org.liubility.typing.server.domain.dto.TypeChar;
 import org.liubility.typing.server.domain.dto.TypedWordsDTO;
+import org.liubility.typing.server.domain.dto.Words;
 import org.liubility.typing.server.domain.entity.TypingHistory;
 import org.liubility.typing.server.enums.TypingWordsTypeEnum;
+import org.liubility.typing.server.enums.exception.Code203History;
+import org.liubility.typing.server.mapstruct.TypeWordsMapStruct;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
-import org.liubility.typing.server.minio.service.OssFileInfoVO;
-import org.liubility.typing.server.mongo.TypeStatusCountMongo;
+import org.liubility.typing.server.mongo.TypeWordsRepository;
+import org.liubility.typing.server.mongo.entity.TypeStatusCountMongo;
 import org.liubility.typing.server.mongo.TypeStatusCountRepository;
+import org.liubility.typing.server.mongo.entity.TypedWordsMongo;
 import org.liubility.typing.server.service.TypingHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,17 +45,20 @@ import java.util.stream.Collectors;
 @Service
 public class TypingWordsDetailHandler {
 
-    @Autowired
-    private MinioServiceImpl minioService;
+    private final TypingHistoryService typingHistoryService;
 
-    @Autowired
-    private TypingHistoryService typingHistoryService;
+    private final TypeWordsRepository typeWordsRepository;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final TypeStatusCountRepository typeStatusCountRepository;
 
-    @Autowired
-    private TypeStatusCountRepository typeStatusCountRepository;
+    private final TypeWordsMapStruct typeWordsMapStruct;
+
+    public TypingWordsDetailHandler(TypingHistoryService typingHistoryService, TypeWordsRepository typeWordsRepository, TypeStatusCountRepository typeStatusCountRepository, TypeWordsMapStruct typeWordsMapStruct) {
+        this.typingHistoryService = typingHistoryService;
+        this.typeWordsRepository = typeWordsRepository;
+        this.typeStatusCountRepository = typeStatusCountRepository;
+        this.typeWordsMapStruct = typeWordsMapStruct;
+    }
 
     public void saveTypingWordsDetail(TypedWordsDTO typedWordsDTO, Long userId) {
         Long historyId = typedWordsDTO.getHistoryId();
@@ -57,16 +66,18 @@ public class TypingWordsDetailHandler {
         if (history == null) {
             return;
         }
-        List<TypedWordsDTO.Words> typeWords = typedWordsDTO.getTypeWords();
+        List<Words> typeWords = typedWordsDTO.getTypeWords();
         Map<String, TypeStatusCount> map = new HashMap<>();
-        for (TypedWordsDTO.Words typeWord : typeWords) {
+        for (Words typeWord : typeWords) {
             TypeStatusCount typeStatusCount = map.computeIfAbsent(typeWord.mergeWords(), e -> new TypeStatusCount());
             typeStatusCount.incr(this.getWordsStatus(typeWord));
         }
 
-        minioService.upload(typedWordsDTO, "type-word",
-                FileUtils.processingPaths(String.valueOf(userId), new SimpleDateFormat("yyyy-MM-dd").format(history.getTypeDate()), String.valueOf(historyId)));
+        // 保存整体详情到mongo
+        typeWordsRepository.save(typeWordsMapStruct.dtoToMongo(typedWordsDTO));
 
+
+        // 解析打词计数，记录到mongo
         List<TypeStatusCountMongo> oldTypeStatusCountMongoList = typeStatusCountRepository.findTypeStatusCountByUserIdAndWordIn(userId, map.keySet());
         Map<String, TypeStatusCountMongo> oldTypeStatusCountMongoMap = oldTypeStatusCountMongoList.stream()
                 .collect(Collectors.toMap(TypeStatusCountMongo::getWord, typeStatusCountMongo -> typeStatusCountMongo));
@@ -89,10 +100,26 @@ public class TypingWordsDetailHandler {
         typeStatusCountRepository.saveAll(statusCountMongoList);
     }
 
-    public WordsDetailStatus getWordsStatus(TypedWordsDTO.Words typeWord) {
-        List<TypedWordsDTO.TypeChar> wordsChar = typeWord.getWordsChar();
-        List<TypedWordsDTO.TypeChar> codesChar = typeWord.getCodesChar();
-        boolean mistake = wordsChar.stream().anyMatch(TypedWordsDTO.TypeChar::getMistake);
+    public TypedWordsDTO getTypingWordsDetail(Long historyId, Long userId) {
+        TypingHistory typingHistory = typingHistoryService.getById(historyId);
+        if (typingHistory == null) {
+            throw new LBRuntimeException(Code203History.NOT_EXIST_ARTICLE);
+        }
+        if (!Objects.equals(userId, typingHistory.getUserId())) {
+            throw new LBRuntimeException(Code203History.AUTH_FAIL_ARTICLE);
+        }
+        TypedWordsMongo typedWordsMongo = typeWordsRepository.getTypeWordsMongoByHistoryId(historyId);
+
+        if (typedWordsMongo == null) {
+            throw new LBRuntimeException(Code203History.NOT_EXIST_TYPED_WORDS);
+        }
+        return typeWordsMapStruct.mongoToDto(typedWordsMongo);
+    }
+
+    private WordsDetailStatus getWordsStatus(Words typeWord) {
+        List<TypeChar> wordsChar = typeWord.getWordsChar();
+        List<TypeChar> codesChar = typeWord.getCodesChar();
+        boolean mistake = wordsChar.stream().anyMatch(TypeChar::getMistake);
         boolean result = wordsChar.stream().noneMatch(typeChar -> typeChar.getMistake() && typeChar.getDeleteTime() != null);
         String words = typeWord.mergeWords();
         String codes = typeWord.mergeCodes();

@@ -8,8 +8,10 @@ import org.liubility.typing.server.code.parse.SubscriptInstance;
 import org.liubility.typing.server.compare.ArticleComparator;
 import org.liubility.typing.server.compare.ComparisonItem;
 import org.liubility.typing.server.minio.service.MinioServiceImpl;
-import org.liubility.typing.server.mongo.TypeStatusCountMongo;
+import org.liubility.typing.server.mongo.TypeWordsRepository;
+import org.liubility.typing.server.mongo.entity.TypeStatusCountMongo;
 import org.liubility.typing.server.mongo.TypeStatusImpl;
+import org.liubility.typing.server.mongo.entity.TypedWordsMongo;
 import org.liubility.typing.server.scheduling.SynEarlierVersionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -104,5 +106,14 @@ public class TestController {
                                                             @RequestParam Integer codeRight,
                                                             @RequestParam Integer limit) {
         return Result.success(typeStatus.test(userId, codeRight, limit));
+    }
+
+    @Autowired
+    private TypeWordsRepository typeWordsRepository;
+
+    @PostMapping(value = "/mongo/getTypedWords")
+    @ApiOperation("getTypedWords")
+    public Result<TypedWordsMongo> getTypedWords(@RequestParam Long historyId) {
+        return Result.success(typeWordsRepository.getTypeWordsMongoByHistoryId(historyId));
     }
 }

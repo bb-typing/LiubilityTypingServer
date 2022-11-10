@@ -1,6 +1,6 @@
 package org.liubility.typing.server.mongo;
 
-import org.bson.types.ObjectId;
+import org.liubility.typing.server.mongo.entity.TypeStatusCountMongo;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
